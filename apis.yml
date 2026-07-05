@@ -1,0 +1,55 @@
+name: Bitculator
+description: >-
+  Cryptocurrency market-data and analytics platform offering live prices, indicators, market cap, alerts, calculators, a
+  portfolio tracker, and embeddable widgets. Exposes a REST Data API with a public OpenAPI 3.0.3 contract.
+url: https://bitculator.apievangelist.com/apis.yml
+created: '2026-07-05'
+modified: '2026-07-05'
+specificationVersion: '0.21'
+tags:
+  - cryptocurrency
+  - market-data
+  - crypto-analytics
+  - fintech
+  - prices-and-quotes
+  - technical-indicators
+  - exchange-data
+  - wallets
+  - sentiment
+  - derivatives-liquidations
+  - rest-api
+  - openapi
+apis:
+  - name: Bitculator Data API
+    description: >-
+      REST API over HTTPS with Bearer API-key auth providing coins, prices, OHLC history, exchanges & trust scores,
+      tickers, wallets, sentiment/fear-greed, technical indicators, liquidations, insights, calculators, alarms, and
+      outbound webhooks. Public OpenAPI 3.0.3 spec with 70 documented paths.
+    humanURL: https://bitculator.com/en/crypto-api
+    baseURL: https://bitculator.com/api/v1
+    tags:
+      - cryptocurrency
+      - market-data
+      - crypto-analytics
+      - fintech
+      - prices-and-quotes
+      - technical-indicators
+      - exchange-data
+      - wallets
+      - sentiment
+      - derivatives-liquidations
+      - rest-api
+      - openapi
+    properties:
+      - type: OpenAPI
+        url: https://bitculator.com/api/v1/openapi.json
+      - type: Documentation
+        url: https://bitculator.com/en/documentation/api/v1
+maintainers:
+  - FN: Christian Lauridsen
+    url: https://bitculator.com
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 97
+  at: '2026-07-05T18:55:10.486Z'
