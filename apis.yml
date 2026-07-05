@@ -1,55 +1,53 @@
 name: Bitculator
 description: >-
-  Cryptocurrency market-data and analytics platform offering live prices, indicators, market cap, alerts, calculators, a
-  portfolio tracker, and embeddable widgets. Exposes a REST Data API with a public OpenAPI 3.0.3 contract.
+  Modern cryptocurrency REST API providing programmatic read access to crypto market data including coins, prices,
+  markets, exchanges, wallets, global market data, sentiment, indicators, liquidations, conversions, calculators,
+  editorial content, alarms, and webhooks. Version 1.0.0 with 70+ endpoints across 15 groups.
 url: https://bitculator.apievangelist.com/apis.yml
 created: '2026-07-05'
 modified: '2026-07-05'
 specificationVersion: '0.21'
 tags:
   - cryptocurrency
-  - market-data
-  - crypto-analytics
+  - crypto market data
+  - blockchain
+  - finance
   - fintech
-  - prices-and-quotes
-  - technical-indicators
-  - exchange-data
+  - web3
+  - trading
+  - exchange data
   - wallets
   - sentiment
-  - derivatives-liquidations
-  - rest-api
-  - openapi
+  - indicators
 apis:
   - name: Bitculator Data API
     description: >-
-      REST API over HTTPS with Bearer API-key auth providing coins, prices, OHLC history, exchanges & trust scores,
-      tickers, wallets, sentiment/fear-greed, technical indicators, liquidations, insights, calculators, alarms, and
-      outbound webhooks. Public OpenAPI 3.0.3 spec with 70 documented paths.
-    humanURL: https://bitculator.com/en/crypto-api
+      REST API for cryptocurrency market data. JSON responses with Laravel-style pagination, HTTP Bearer auth,
+      quota-based Free/Starter/Pro plans, and signed webhook deliveries. OpenAPI 3.0.3 contract.
+    humanURL: https://bitculator.com/en/documentation/api/v1
     baseURL: https://bitculator.com/api/v1
     tags:
       - cryptocurrency
-      - market-data
-      - crypto-analytics
+      - crypto market data
+      - blockchain
+      - finance
       - fintech
-      - prices-and-quotes
-      - technical-indicators
-      - exchange-data
+      - web3
+      - trading
+      - exchange data
       - wallets
       - sentiment
-      - derivatives-liquidations
-      - rest-api
-      - openapi
+      - indicators
     properties:
       - type: OpenAPI
         url: https://bitculator.com/api/v1/openapi.json
       - type: Documentation
         url: https://bitculator.com/en/documentation/api/v1
 maintainers:
-  - FN: Christian Lauridsen
+  - FN: Bitculator
     url: https://bitculator.com
 generated:
   by: apis.io/add
   model: claude-opus-4-8
-  confidence: 97
-  at: '2026-07-05T18:55:10.486Z'
+  confidence: 95
+  at: '2026-07-05T18:54:54.185Z'
