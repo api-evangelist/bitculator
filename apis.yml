@@ -18,7 +18,7 @@ description: >-
 url: https://raw.githubusercontent.com/api-evangelist/bitculator/refs/heads/main/apis.yml
 created: '2026-07-05'
 modified: '2026-07-05'
-specificationVersion: '0.21'
+specificationVersion: '0.23'
 tags:
   - cryptocurrency
   - crypto market data
