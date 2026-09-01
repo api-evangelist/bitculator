@@ -31,17 +31,17 @@ created: '2026-07-05'
 modified: '2026-07-05'
 specificationVersion: '0.23'
 tags:
-  - cryptocurrency
-  - crypto market data
+  - Cryptocurrency
+  - crypto-market-data
   - Blockchain
   - Finance
   - Fintech
   - Web3
   - Trading
-  - exchange data
+  - Exchange Data
   - Wallets
-  - sentiment
-  - indicators
+  - Sentiment
+  - Indicators
 tags_raw:
   - cryptocurrency
   - crypto market data
@@ -62,17 +62,17 @@ apis:
     humanURL: https://bitculator.com/en/documentation/api/v1
     baseURL: https://bitculator.com/api/v1
     tags:
-      - cryptocurrency
-      - crypto market data
+      - Cryptocurrency
+      - crypto-market-data
       - Blockchain
       - Finance
       - Fintech
       - Web3
       - Trading
-      - exchange data
+      - Exchange Data
       - Wallets
-      - sentiment
-      - indicators
+      - Sentiment
+      - Indicators
     tags_raw:
       - cryptocurrency
       - crypto market data
