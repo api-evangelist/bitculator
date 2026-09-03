@@ -1,0 +1,36 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/documentation/api/v1
+note: >-
+  Bitculator ships no AsyncAPI document (none found on the docs host or GitHub org) but documents
+  a real signed webhook surface — this file captures that catalog. The event surface is currently
+  a single event type wired to the Alarms feature.
+delivery:
+  transport: HTTPS POST (JSON body)
+  registration: POST /api/v1/webhooks (operationId createAWebhookEndpoint, max 5 endpoints/account)
+  constraints: Public HTTPS hosts only — internal/private addresses are rejected.
+  secret: >-
+    Signing secret is returned ONLY in the creation response ("the ONLY time it is ever shown, so
+    store it immediately").
+  retries: 3x with backoff
+signing:
+  header: X-Bitculator-Signature
+  scheme: 't=<unix-ts>,v1=<hex hmac_sha256("<ts>.<raw-body>", secret)>'
+  event_header: X-Bitculator-Event
+  verification: >-
+    Recompute the HMAC over "<ts>.<raw-body>" with the endpoint secret, compare in constant time
+    (hash_equals), and reject if t is older than ~300 seconds (replay guard) — the docs ship a
+    PHP recipe.
+events:
+  - name: alarm.triggered
+    detail: >-
+      Fired when a target alarm (rate/volume/marketcap crossing above/below a target) triggers
+      and its notification channel is "webhook". The only event type currently allowed in the
+      events[] subscription array.
+tooling:
+  - operation: sendATestEvent
+    path: POST /api/v1/webhooks/{id}/test
+    detail: Sends a test delivery to verify an endpoint's signature handling end-to-end.
+  - operation: webhookDeliveryLog
+    path: GET /api/v1/webhooks/{id}/deliveries
+    detail: Per-endpoint delivery attempt log.

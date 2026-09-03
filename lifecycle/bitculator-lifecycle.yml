@@ -1,0 +1,36 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/documentation/api/v1
+versioning:
+  scheme: uri-path
+  current: v1
+  detail: >-
+    All endpoints live under /api/v1; the OpenAPI contract declares info.version 1.0.0. Docs pages
+    are versioned the same way (documentation/api/v1, documentation/mcp/v1, documentation/embed/v1).
+deprecation_policy:
+  published: false
+  detail: >-
+    No deprecation policy, Sunset/Deprecation header (RFC 8594) usage, or dated changelog was found
+    on the docs host, and the OpenAPI marks zero operations deprecated — consistent with a v1
+    launched mid-2026 (all eight SDKs released 1.0.1 on 2026-07-10).
+deprecated_operations: []
+status_page:
+  published: false
+  detail: 'No status page found: https://bitculator.com/status returned 404 and the docs link none.'
+sla:
+  published: false
+  detail: >-
+    No SLA published. The pricing page notes "Prices are provisional launch figures. Quotas and
+    rate limits are firm." Pro plan carries "priority support"; no uptime commitment is stated.
+health_check:
+  operation: ping
+  path: GET /api/v1/ping
+  detail: >-
+    Authenticated no-op for verifying a key end-to-end (auth -> per-plan burst throttle -> monthly
+    quota); counts against quota like any other call.
+probes:
+  - url: https://bitculator.com/status
+    status: 404
+  - url: https://bitculator.com/en/changelog
+    status: 404
+checked: '2026-09-03'

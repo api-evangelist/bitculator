@@ -1,0 +1,44 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/bitculator-data-api-openapi.json + https://bitculator.com/en/documentation/api/v1
+note: >-
+  Derived from the OpenAPI 3.0.3 contract and the public API reference. No compliance/marketing
+  claims page exists to search. Crypto market-data has no dominant domain contract standard the
+  spec could declare (no OpenRTB/FIX/ISO-20022-style signature applies to this surface), so no
+  domain_standard_conformance entry is asserted — reward-only, absence is not a finding.
+standards:
+  - id: openapi
+    conforms: true
+    evidence: >-
+      Publishes OpenAPI 3.0.3 at https://bitculator.com/api/v1/openapi.json (HTTP 200, public, no
+      key required), 82 paths / 85 operations, all operationIds present.
+  - id: oauth2
+    conforms: false
+    evidence: >-
+      Auth is static Bearer API keys (http/bearer securityScheme); no OAuth2 flows, no
+      /.well-known/oauth-authorization-server (probed 404 on 2026-09-03). The MCP docs state an
+      OAuth flow is "on the roadmap".
+  - id: oidc
+    conforms: false
+    evidence: /.well-known/openid-configuration returned 404 (probed 2026-09-03).
+  - id: rfc9457
+    conforms: false
+    evidence: >-
+      Errors use a proprietary { error: { code, message, details } } envelope with Content-Type
+      application/json, not application/problem+json.
+  - id: pagination
+    conforms: true
+    evidence: >-
+      Consistent page/per_page pagination across list endpoints (Laravel-style, documented in the
+      { data, meta } envelope), with plan-based per_page caps enforced by 422.
+  - id: idempotency
+    conforms: false
+    evidence: No idempotency-key mechanism documented anywhere in the API reference.
+  - id: webhook-signing
+    conforms: true
+    evidence: >-
+      Stripe-style HMAC-SHA256 signed webhook deliveries (X-Bitculator-Signature: t=<ts>,v1=<hmac>)
+      with a documented constant-time verification recipe and replay guard.
+  - id: json:api
+    conforms: false
+    evidence: 'Envelope is { data, meta } but without JSON:API resource objects, types, or links.'

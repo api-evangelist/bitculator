@@ -1,0 +1,54 @@
+# Bitculator
+
+> Bitculator is a cryptocurrency market-data, analytics, and developer-API platform. It tracks thousands of coins and tokens across major exchanges — real-time prices, market capitalisation, 24-hour volume, circulating and max supply, all-time highs and lows, exchange trust scores, and hardware/software wallet reviews — plus proprietary market-sentiment analytics: a crypto Fear & Greed index, a Bull/Bear index, an Altseason index, and a market-wide technical-indicator tally. The same data is available on the website (in 19 languages) and through a Bearer-authenticated REST/JSON API.
+
+Developers use the **Bitculator Data API**, a REST API with base URL `https://bitculator.com/api/v1`. Every request authenticates with an `Authorization: Bearer <API_KEY>` header (create a free key in the developer console). Responses use a `{ data, meta }` JSON envelope, and prices, rates and supplies are returned as exact decimal strings (never lossy floats). Endpoints are grouped into: coins & prices, markets & tickers, exchanges & trust scores, wallets, technical indicators, sentiment indices, global market aggregates, currency conversion, editorial content, and webhooks/alarms. There are three plans — **Free, Starter, Pro** — each with a monthly request quota and per-minute burst limits.
+
+## Localisation
+
+**Every page URL below applies to all 19 languages.** The links are shown in their canonical English form (`/en/…`); swap the `/en/` path segment for any supported locale code to get the exact same page, translated:
+
+`en`, `de`, `fr`, `es`, `it`, `nl`, `da`, `no`, `sv`, `ru`, `ja`, `zh`, `tr`, `pt`, `vi`, `id`, `pl`, `uk`, `cs`
+
+Example: `https://bitculator.com/en/crypto-markets` → `https://bitculator.com/de/crypto-markets`. The machine artifacts (`/api/v1/openapi.json`, the Postman collection, and the API itself under `/api/v1`) are locale-agnostic and carry no `/en/` segment.
+
+## Data API
+- [API documentation](https://bitculator.com/en/documentation/api/v1): Complete reference for the Bitculator crypto Data API — every endpoint, query parameter, authentication, rate limits and quotas, the error envelope, and copy-paste code examples in cURL, JavaScript, PHP and Python.
+- [OpenAPI specification](https://bitculator.com/api/v1/openapi.json): Machine-readable OpenAPI 3.0 spec for the Data API (public, no key required) — import into Swagger, Postman or code generators.
+- [Postman collection](https://bitculator.com/documentation/api/v1.postman): Ready-to-import Postman collection for the Data API.
+- [API overview & pricing](https://bitculator.com/en/crypto-api): The crypto API landing page — what data the API covers, a Free vs Starter vs Pro plan comparison, quotas, and example requests.
+- [Developer console](https://bitculator.com/en/user/developer/api): Create and manage Bearer API keys (the `data-api` ability) and view usage and quota — requires a free account.
+- [Embed widgets documentation](https://bitculator.com/en/documentation/embed/v1): Free embeddable crypto widgets (iframe) for any website — currency converter, price-history chart, and DCA / profit / interest / loan / staking / tax calculators.
+
+## Market data
+- [Crypto markets](https://bitculator.com/en/crypto-markets): Live cryptocurrency prices and market-cap rankings — a sortable table of thousands of coins and tokens with price, 24h/7d change, volume, market cap and supply.
+- [Market heatmap](https://bitculator.com/en/crypto-markets/heatmap): Crypto market heatmap — a treemap of the top coins sized by market cap and coloured by price performance.
+- [Exchanges](https://bitculator.com/en/crypto-exchanges): Cryptocurrency exchange rankings and trust scores, with trading volume and market coverage.
+- [Wallets](https://bitculator.com/en/crypto-wallets): Crypto wallet reviews and comparisons — hardware and software wallets, specifications, and supported assets.
+- [Liquidations](https://bitculator.com/en/crypto-liquidations): Crypto derivatives liquidations — long vs short liquidation activity across exchanges.
+- [Portfolio tracker](https://bitculator.com/en/crypto-portfolio-tracker): Free crypto portfolio tracker — monitor holdings, cost basis and profit/loss across coins.
+
+## Calculators & tools
+- [All crypto tools](https://bitculator.com/en/crypto-tools): Directory of Bitculator's free cryptocurrency calculators and tools.
+- [DCA calculator](https://bitculator.com/en/crypto-tools/dollar-cost-average-dca-calculator): Dollar-cost-averaging (DCA) calculator — simulate recurring crypto buys and returns over time.
+- [Profit / loss calculator](https://bitculator.com/en/crypto-tools/profit-loss-calculator): Crypto profit and loss calculator — compute ROI, net profit and break-even for a trade.
+- [Compound interest calculator](https://bitculator.com/en/crypto-tools/interest-calculator): Crypto compound-interest calculator — project future value with compounding.
+- [Loan calculator](https://bitculator.com/en/crypto-tools/loan-calculator): Crypto loan calculator — repayment, interest and amortisation schedule.
+- [Staking calculator](https://bitculator.com/en/crypto-tools/staking-calculator): Crypto staking-rewards calculator — estimate yield from amount, APR/APY and duration.
+- [Tax calculator](https://bitculator.com/en/crypto-tools/tax-calculator): Crypto tax calculator — estimate taxable amounts across gains, mining, staking, airdrops and yield.
+- [Mining calculator](https://bitculator.com/en/crypto-tools/mining-calculator): Crypto mining profitability calculator.
+- [Currency converter](https://bitculator.com/en/crypto-tools/converter/bitcoin/ethereum): Crypto currency converter — convert between any two crypto or fiat currencies at live rates.
+- [Marketcap flipper](https://bitculator.com/en/crypto-tools/market-cap-flipper-calculator/bitcoin/ethereum): "Flippening" calculator — the price one coin needs to match another's market cap, and the implied multiple.
+- [Price history chart](https://bitculator.com/en/crypto-tools/historical-price-data/bitcoin): Interactive historical price chart (zoom) for any cryptocurrency.
+- [Compare](https://bitculator.com/en/crypto-tools/compare): Compare cryptocurrencies, exchanges or wallets side by side.
+
+## Learn
+- [Glossary](https://bitculator.com/en/crypto-glossary): Crypto glossary — clear definitions of cryptocurrency, blockchain, market and trading terms.
+- [Articles](https://bitculator.com/en/crypto-articles): Cryptocurrency articles, guides and explainers.
+- [Quizzes](https://bitculator.com/en/learn/quizzes): Interactive crypto quizzes — test and learn cryptocurrency, blockchain and trading knowledge.
+- [Facts](https://bitculator.com/en/crypto-tools/facts): Short, shareable cryptocurrency facts.
+
+## Optional
+- [Documentation hub](https://bitculator.com/en/documentation): Index of all Bitculator product and API documentation.
+- [Sitemap](https://bitculator.com/sitemap/sitemap.xml): Full XML sitemap of the site.
+- [robots.txt](https://bitculator.com/robots.txt): Crawler directives.

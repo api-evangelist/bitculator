@@ -28,7 +28,7 @@ description: >-
   editorial content, alarms, and webhooks. Version 1.0.0 with 70+ endpoints across 15 groups.
 url: https://raw.githubusercontent.com/api-evangelist/bitculator/refs/heads/main/apis.yml
 created: '2026-07-05'
-modified: '2026-07-05'
+modified: '2026-09-03'
 specificationVersion: '0.23'
 tags:
   - Cryptocurrency
@@ -88,13 +88,74 @@ apis:
     properties:
       - type: OpenAPI
         url: https://bitculator.com/api/v1/openapi.json
+      - type: OpenAPI
+        url: openapi/bitculator-data-api-openapi.json
       - type: Documentation
         url: https://bitculator.com/en/documentation/api/v1
+      - type: APIReference
+        url: https://bitculator.com/en/documentation/api/v1
+      - type: Overlay
+        url: overlays/bitculator-data-api-overlay.yaml
+      - type: Postman
+        url: https://bitculator.com/documentation/api/v1.postman
 maintainers:
   - FN: Bitculator
     url: https://bitculator.com
+    email: contact@bitculator.com
 generated:
   by: apis.io/add
   model: claude-opus-4-8
   confidence: 95
   at: '2026-07-05T18:54:54.185Z'
+common:
+- type: Authentication
+  url: authentication/bitculator-authentication.yml
+- type: DomainSecurity
+  url: security/bitculator-domain-security.yml
+- type: Packages
+  url: packages/bitculator-packages.yml
+- type: SDKs
+  url: packages/bitculator-packages.yml
+- type: MCPServer
+  url: mcp/bitculator-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/bitculator-tool-crosswalk.yml
+- type: LLMsTxt
+  url: llms/bitculator-llms.txt
+- type: Conformance
+  url: conformance/bitculator-conformance.yml
+- type: ErrorCatalog
+  url: errors/bitculator-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/bitculator-lifecycle.yml
+- type: Conventions
+  url: conventions/bitculator-conventions.yml
+- type: Components
+  url: components/bitculator-components.yml
+- type: DataModel
+  url: data-model/bitculator-data-model.yml
+- type: Webhooks
+  url: asyncapi/bitculator-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/bitculator-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/bitculator-rate-limits.yml
+- type: GitHubOrganization
+  url: https://github.com/Bitculator
+- type: Pricing
+  url: https://bitculator.com/en/crypto-api
+- type: TermsOfService
+  url: https://bitculator.com/en/terms-of-service
+- type: PrivacyPolicy
+  url: https://bitculator.com/en/privacy-policy
+- type: Support
+  url: https://bitculator.com/en/contact
+- type: SignUp
+  url: https://bitculator.com/en/register
+x-enrichment:
+  date: '2026-09-03'
+  status: enriched
+  artifacts_added: 24
+  pass: local-v1

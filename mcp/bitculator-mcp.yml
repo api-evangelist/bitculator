@@ -1,0 +1,94 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/documentation/mcp/v1
+name: Bitculator MCP Server
+description: >-
+  Official hosted MCP server exposing the Bitculator Data API as 19 curated, read-only tools over
+  Streamable HTTP. One key, one quota: every tool call counts as one Data API request against the
+  plan's monthly quota, with the plan's per-minute burst limit applying per tool call (Free 30,
+  Starter 60, Pro 120). The protocol handshake (initialize, tools/list) is free. All prices, rates,
+  market caps and supplies come back as decimal strings, exactly like the REST API. Documented
+  client setups: Claude Code, Cursor, VS Code, the Claude Messages API MCP connector, plus OpenAI
+  Agents SDK, Vercel AI SDK, LangChain, LlamaIndex, Mastra and Semantic Kernel snippets.
+deployment:
+  mode: remote
+  endpoint: https://bitculator.com/mcp
+  auth: api-key
+  verified: probed
+  note: >-
+    POST tools/list to https://bitculator.com/mcp on 2026-09-03 returned HTTP 401
+    {"error":{"code":"unauthenticated","message":"Missing API key..."}} — the endpoint is live and
+    Bearer-key gated (same bc_ keys as the Data API, data-api ability; embed keys rejected). Tool
+    schemas below are from the provider's public MCP documentation page, which documents every tool
+    with its parameters; authenticated introspection would confirm the live inputSchemas. ChatGPT
+    connector support (OAuth) is stated as on the provider's roadmap — API-key clients work today.
+transport: streamable-http
+status: official
+tools:
+  - name: search_coins
+    description: Resolve a coin or token by free-text name or symbol to its canonical slug, with a ranked market summary per match.
+    parameters: [query (required), type, limit]
+  - name: get_coin
+    description: Full profile for one coin — supplies, rank, ATH/ATL, FDV, links, contracts, description.
+    parameters: [slug (required)]
+  - name: get_prices
+    description: Current spot prices for up to 100 coins in one call, optionally converted to a fiat currency.
+    parameters: [slugs, symbols, ids, convert]
+  - name: get_top_movers
+    description: Biggest gainers or losers by percentage change over 24h or 7d.
+    parameters: [direction (required), interval, limit]
+  - name: get_trending_coins
+    description: Coins currently drawing the most attention on Bitculator.
+    parameters: [limit]
+  - name: get_price_history
+    description: OHLCV candles for a coin over a date range (minutely ~8 days, half-hourly ~3 months, hourly ~6 months, daily full history).
+    parameters: [slug (required), interval, start, end, limit]
+  - name: get_historical_price
+    description: Price of one coin on one specific past date, with up to a 3-day fallback.
+    parameters: [slug (required), date (required)]
+  - name: get_global_history
+    description: Time series of total crypto market cap or volume.
+    parameters: [metric (required), period]
+  - name: get_global_market
+    description: Whole-market snapshot — total cap, 24h volume, BTC/ETH dominance, counts. No parameters.
+    parameters: []
+  - name: get_fear_greed
+    description: Fear & Greed index for the market or one coin, with 7d/30d sub-scores.
+    parameters: [coin]
+  - name: get_altseason_index
+    description: Altseason index with optional daily history.
+    parameters: [days]
+  - name: get_liquidations_summary
+    description: Today's futures liquidation totals with long/short split and dominance. No parameters.
+    parameters: []
+  - name: list_exchanges
+    description: Ranked exchanges with 24h volume, dominance, pair/asset counts; resolves names to slugs.
+    parameters: [type, search, sort, limit]
+  - name: get_exchange
+    description: Full profile for one exchange.
+    parameters: [slug (required)]
+  - name: get_exchange_trust_score
+    description: Exchange trust score (0-10) with its 13-factor breakdown.
+    parameters: [slug (required)]
+  - name: get_coin_markets
+    description: Where a coin trades — markets across exchanges with pair, price, 24h volume.
+    parameters: [slug (required), exchange, instrument, limit]
+  - name: get_coin_technicals
+    description: Multi-indicator technical snapshot — RSI, MACD, SMA, ADX, MFI, CCI, OBV, VWAP, volatility and more.
+    parameters: [slug (required)]
+  - name: convert_currency
+    description: Convert an amount between any crypto and/or fiat currencies (up to 10 targets) at live rates.
+    parameters: [from (required), to (required), amount]
+  - name: calculate_dca
+    description: Backtest a dollar-cost-averaging strategy against real price history.
+    parameters: [slug (required), amount (required), interval (required), start (required), end, series]
+docs: https://bitculator.com/en/documentation/mcp/v1
+x-evidence:
+  fetched: '2026-09-03'
+  probes:
+    - url: https://bitculator.com/mcp
+      method: 'POST tools/list'
+      http_status: 401
+      body_code: unauthenticated
+    - url: https://bitculator.com/en/documentation/mcp/v1
+      http_status: 200

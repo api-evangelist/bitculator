@@ -1,0 +1,42 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/documentation/embed/v1
+note: >-
+  Embed widgets are a distinct product surface from the Data API and SDKs: self-contained iframe
+  pages under /{locale}/embed/... with their own key class (the "api" ability, passed as
+  ?embed_key= query parameter — public by design) and their own quota (Free ships 10,000 embed
+  loads/month, separate from the Data API pool). Keyed requests must come from a domain
+  allow-listed in the developer console; keyless "anonymous mode" works for quick tests but is
+  limited per visitor IP. Widgets honour the {locale} path segment (19 languages) and the theme
+  cookie or ?theme=dark. No script tag needed — pure iframe.
+loader: iframe (no JavaScript required)
+families:
+  - name: Converter
+    widgets:
+      - name: Currency converter
+        path: /{locale}/embed/converter/{from}/{to}
+        example: https://bitculator.com/en/embed/converter/bitcoin/usd?embed_key=YOUR_EMBED_KEY
+  - name: Charts
+    widgets:
+      - name: Price history chart
+        detail: Real-time/zoomable historical price chart for any coin.
+      - name: Marketcap flipper
+        detail: '"Flippening" comparison widget.'
+  - name: Calculators
+    widgets:
+      - name: DCA simulator
+      - name: Profit calculator
+      - name: Interest calculator
+      - name: Tax calculator
+      - name: Loan calculator
+      - name: Staking calculator
+csp_note: >-
+  Sites serving a Content-Security-Policy must add https://bitculator.com to frame-src (and
+  child-src for older browsers); Bitculator allows embedding on any domain.
+widget_count: 9
+spreadsheet_connectors:
+  detail: >-
+    Related no-code surfaces documented on the API landing page: Google Sheets custom functions
+    (=BITCULATOR_PRICE(), =BITCULATOR_HISTORY(), =BITCULATOR_FEARGREED()) and Excel Power Query /
+    Office Scripts — source at github.com/Bitculator/bitculator-integrations. These ride the Data
+    API key, not the embed key.

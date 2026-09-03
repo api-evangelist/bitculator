@@ -1,0 +1,100 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/documentation/api/v1
+note: >-
+  Cross-cutting semantics read from the provider's own API documentation (server-rendered, public)
+  and the OpenAPI 3.0.3 contract at /api/v1/openapi.json.
+auth:
+  style: http-bearer
+  header: 'Authorization: Bearer <key>'
+  key_prefix: bc_
+  detail: >-
+    Keys are Bearer-only, carry the "data-api" ability, and are minted in the developer console
+    (free plan, no card). Docs say keep them server-side — never client-side. A separate "api"
+    ability key class exists only for iframe embed widgets (query-parameter, public by design);
+    data-api keys are rejected on the embed surface and embed keys on the Data API/MCP.
+  cross_link: authentication/bitculator-authentication.yml
+versioning:
+  style: uri-path
+  detail: All endpoints live under /api/v1; the OpenAPI declares version 1.0.0.
+  cross_link: lifecycle/bitculator-lifecycle.yml
+envelope:
+  success: '{ "data": ..., "meta": ... }'
+  detail: >-
+    Every response is JSON in a { data, meta } envelope. Prices, rates, market caps and supplies
+    are decimal STRINGS to preserve market precision ("floats can't carry market precision");
+    counts, percentages and analytics values are JSON numbers.
+error_envelope:
+  shape: '{ "error": { "code", "message", "details" } }'
+  guidance: 'Match on error.code, not the message — messages may be reworded, codes are stable.'
+  cross_link: errors/bitculator-problem-types.yml
+pagination:
+  style: page-based (Laravel-style)
+  params: [page, per_page]
+  detail: >-
+    per_page caps are plan-based — Free 100, Starter/Pro 250 — and exceeding a cap returns 422
+    (error.code "validation") rather than clamping.
+rate_limit_signaling:
+  headers: [X-Quota-Limit, X-Quota-Used, X-Quota-Remaining, X-Quota-Reset]
+  detail: >-
+    Every response carries the live monthly quota in X-Quota-* headers ("X-Quota-* on every
+    call"). A per-plan per-minute burst throttle sits in front of the monthly quota
+    (auth -> burst throttle -> monthly quota, per the /ping docs).
+  cross_link: rate-limits/bitculator-rate-limits.yml
+plan_gating:
+  detail: >-
+    Each endpoint shows the minimum plan required (Free 55 endpoints, Starter 67, Pro 76 of 76);
+    calling above your plan returns error.code "plan_required" with details.required_plan.
+idempotency:
+  supported: false
+  detail: >-
+    No idempotency key mechanism is documented anywhere in the API reference. The write surface is
+    small (votes, feedback, alarms, webhook endpoints) and retried creates would duplicate.
+webhooks:
+  signing: 'X-Bitculator-Signature: t=<unix-ts>,v1=<hex hmac_sha256("<ts>.<raw-body>", secret)>'
+  event_header: X-Bitculator-Event
+  detail: >-
+    Stripe-style signed deliveries. Verify by recomputing the HMAC over "<ts>.<raw-body>" with the
+    endpoint secret, compare in constant time, reject if t is older than ~5 minutes (replay
+    guard). Signing secret is returned ONLY on webhook creation. Deliveries retry 3x with backoff.
+  cross_link: asyncapi/bitculator-webhooks.yml
+localization:
+  detail: >-
+    Docs and site pages exist in 19 locales via the /{locale}/ path segment; the API itself and
+    machine artifacts (/api/v1, openapi.json, the Postman collection) are locale-agnostic.
+reversibility:
+  status: documented
+  read_only_share: >-
+    78 of 85 operations are read-only; the write surface is 7 operations across sentiment votes,
+    article feedback, alarms and webhook endpoints. No monetary writes exist.
+  writes:
+    - operation: createAnAlarm
+      surface: POST /api/v1/alarms
+      reversal: deleteAnAlarm
+      reversal_surface: DELETE /api/v1/alarms/{id}
+      window: >-
+        Not stated — the docs document deletion ("spends one alarm slot" on create; delete frees
+        it) but state no time window, so this grades documented rather than verified.
+      docs: https://bitculator.com/en/documentation/api/v1
+    - operation: createAWebhookEndpoint
+      surface: POST /api/v1/webhooks
+      reversal: deleteAWebhookEndpoint
+      reversal_surface: DELETE /api/v1/webhooks/{id}
+      window: Not stated — deletion is documented, no time window is declared.
+      docs: https://bitculator.com/en/documentation/api/v1
+    - operation: castASentimentVote
+      surface: POST /api/v1/coins/{slug}/votes
+      reversal: null
+      window: null
+      note: No un-vote or vote-change operation is documented — this write is irreversible via the API.
+    - operation: submitArticleFeedback
+      surface: POST /api/v1/articles/{slug}/feedback
+      reversal: null
+      window: null
+      note: No retraction operation is documented.
+    - operation: sendATestEvent
+      surface: POST /api/v1/webhooks/{id}/test
+      reversal: null
+      window: null
+      note: Fire-and-forget test delivery — nothing to reverse.
+  dry_run_mode: none documented (the webhook test event is the closest rehearsal surface)

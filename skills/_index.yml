@@ -1,0 +1,16 @@
+generated: '2026-09-03'
+method: generated
+source: openapi/bitculator-data-api-openapi.json + https://bitculator.com/en/documentation/api/v1
+note: >-
+  No provider-published Agent Skills or AGENTS.md found (GitHub org carries only SDKs and
+  spreadsheet connectors). These four skills are authored by API Evangelist, grounded in the
+  provider's own OpenAPI operationIds and documented conventions.
+skills:
+  - file: bitculator-price-lookup.md
+    name: bitculator-price-lookup
+  - file: bitculator-market-history.md
+    name: bitculator-market-history
+  - file: bitculator-alarm-webhooks.md
+    name: bitculator-alarm-webhooks
+  - file: bitculator-sentiment-briefing.md
+    name: bitculator-sentiment-briefing

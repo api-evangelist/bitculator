@@ -1,0 +1,90 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/bitculator-data-api-openapi.json
+note: >-
+  Entity graph derived from path structure, path parameters and response examples. The spec
+  declares zero named components.schemas (all shapes are inline), so relationships are read from
+  the URL hierarchy and id/slug reference fields, not $refs. Identifiers: coins, exchanges and
+  wallets address by slug; pairs, videos, insights, alarms and webhooks address by numeric id.
+entities:
+  - name: Coin
+    id_field: slug
+    detail: >-
+      Ranked coin/token with decimal-string price, market_cap, supplies, ATH/ATL, links,
+      contracts, logo. The central entity — most sub-resources hang off /coins/{slug}.
+  - name: Ticker
+    id_field: null
+    detail: Per-exchange market row (exchange x pair x price x volume).
+  - name: Pair
+    id_field: id
+    detail: Venue-aggregated trading pair.
+  - name: Exchange
+    id_field: slug
+    detail: Exchange with rank, volume, dominance, trust score (0-10, 13-factor breakdown).
+  - name: Wallet
+    id_field: slug
+    detail: Hardware/software wallet review with feature taxonomy and supported assets.
+  - name: Indicator
+    id_field: name (rsi, macd, sma, ...)
+    detail: 13 daily technical-indicator families per coin, each with windowed series.
+  - name: Liquidation
+    id_field: null
+    detail: Derivatives liquidation events plus hourly/daily aggregates, netflow, per-coin tallies.
+  - name: Article
+    id_field: slug
+    detail: Editorial content; accepts feedback posts.
+  - name: Video
+    id_field: id
+  - name: Insight
+    id_field: id
+    detail: AI market insights, also exposed per coin as a timeline.
+  - name: Alarm
+    id_field: id
+    detail: User-owned target alarm on a coin metric (rate/volume/marketcap, above/below a target).
+  - name: WebhookEndpoint
+    id_field: id
+    detail: User-owned HTTPS delivery endpoint (max 5/account) with a create-time-only signing secret.
+  - name: Delivery
+    id_field: null
+    detail: Webhook delivery attempt log entry.
+relationships:
+  - from: Coin
+    to: Ticker
+    kind: has_many
+    via: /coins/{slug}/markets
+  - from: Coin
+    to: Indicator
+    kind: has_many
+    via: /coins/{slug}/indicators[/{indicator}]
+  - from: Coin
+    to: Insight
+    kind: has_many
+    via: /coins/{slug}/insights
+  - from: Coin
+    to: Video
+    kind: has_many
+    via: /coins/{slug}/videos
+  - from: Exchange
+    to: Ticker
+    kind: has_many
+    via: /exchanges/{slug}/tickers
+  - from: Exchange
+    to: Coin
+    kind: has_many
+    via: /exchanges/{slug}/assets
+  - from: Wallet
+    to: Coin
+    kind: has_many
+    via: /wallets/{slug}/assets
+  - from: Alarm
+    to: Coin
+    kind: belongs_to
+    via: 'body field: coin (slug)'
+  - from: WebhookEndpoint
+    to: Delivery
+    kind: has_many
+    via: /webhooks/{id}/deliveries
+  - from: Alarm
+    to: WebhookEndpoint
+    kind: notifies_via
+    via: 'alarm notification: "webhook" delivers the alarm.triggered event to registered endpoints'

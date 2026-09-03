@@ -1,0 +1,63 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/documentation/api/v1
+note: >-
+  Limits published on the docs and pricing pages; header behavior confirmed by response examples
+  throughout the API reference ("X-Quota-* on every call"). Two layers: a per-minute burst
+  throttle per plan, then a monthly request quota.
+limit_count: 6
+limits:
+  - scope: per-account
+    window: 1 month
+    limit: 10000
+    plan: Free
+  - scope: per-account
+    window: 1 month
+    limit: 50000
+    plan: Starter
+  - scope: per-account
+    window: 1 month
+    limit: 250000
+    plan: Pro
+  - scope: per-account
+    window: 1 minute
+    limit: 30
+    plan: Free
+    kind: burst
+  - scope: per-account
+    window: 1 minute
+    limit: 60
+    plan: Starter
+    kind: burst
+  - scope: per-account
+    window: 1 minute
+    limit: 120
+    plan: Pro
+    kind: burst
+response_headers:
+  - name: X-Quota-Limit
+    detail: Monthly quota for the plan (e.g. 10000).
+  - name: X-Quota-Used
+    detail: Requests consumed this period (shown in every API reference response example).
+  - name: X-Quota-Remaining
+    detail: Requests left this period (shown in the quickstart example on the pricing page).
+  - name: X-Quota-Reset
+    detail: ISO-8601 instant the quota pool resets (e.g. 2026-07-01T00:00:00+00:00).
+exhaustion:
+  error_code: rate_limited
+  http_status: null
+  detail: >-
+    Over quota, the API returns the stable error envelope with code rate_limited "that tells the
+    assistant when the pool resets" (MCP docs). The exact HTTP status on exhaustion is not
+    explicitly stated in the public docs — recorded as unstated rather than guessed. Retry-After
+    is not documented.
+introspection:
+  operation: keyUsageQuota
+  path: GET /api/v1/usage
+  detail: >-
+    Returns plan, limit, used, remaining, period_start/period_end, burst_per_minute, plus
+    per-endpoint and per-token request tallies.
+quirk: >-
+  The /usage response example in the docs shows "plan": "free" with "burst_per_minute": 60, while
+  the pricing table and MCP docs both state the Free burst is 30/min — the example appears stale;
+  the plan tables are taken as authoritative.

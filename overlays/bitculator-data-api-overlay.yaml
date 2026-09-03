@@ -1,0 +1,38 @@
+overlay: 1.0.0
+info:
+  title: Bitculator Data API — API Evangelist enhancements
+  version: 1.0.0
+  x-generated: '2026-09-03'
+  x-method: generated
+  x-source: >-
+    Enhancements read from https://bitculator.com/en/documentation/api/v1 and
+    https://bitculator.com/en/documentation/mcp/v1; the original contract at
+    openapi/bitculator-data-api-openapi.json is never mutated.
+extends: bitculator-data-api-openapi.json
+actions:
+  - target: $.info
+    update:
+      contact:
+        name: Bitculator developer console
+        url: https://bitculator.com/en/user/developer/api
+      termsOfService: https://bitculator.com/en/terms-of-service
+      x-pricing: https://bitculator.com/en/crypto-api
+      x-llms-txt: https://bitculator.com/llms.txt
+      x-postman-collection: https://bitculator.com/documentation/api/v1.postman
+  - target: $.info.description
+    update: >-
+      Programmatic access to Bitculator market data. Every response carries the live monthly quota
+      in X-Quota-Limit / X-Quota-Used / X-Quota-Remaining / X-Quota-Reset headers; a per-plan
+      per-minute burst throttle (Free 30, Starter 60, Pro 120) sits in front of the monthly quota
+      (Free 10k, Starter 50k, Pro 250k). Errors always use the stable
+      {"error":{"code","message","details"}} envelope — match on error.code (validation,
+      unauthenticated, not_found, plan_required, rate_limited). Webhook deliveries are signed
+      Stripe-style via X-Bitculator-Signature (t=<ts>,v1=<hmac_sha256>).
+  - target: $
+    update:
+      x-mcp-server:
+        endpoint: https://bitculator.com/mcp
+        transport: streamable-http
+        auth: 'Bearer API key (data-api ability) — same keys and quota as the REST API'
+        tools: 19
+        docs: https://bitculator.com/en/documentation/mcp/v1

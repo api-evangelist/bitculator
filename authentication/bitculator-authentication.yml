@@ -1,0 +1,15 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/bitculator-data-api-openapi.json
+summary:
+  types:
+  - http
+schemes:
+- name: default
+  type: http
+  scheme: bearer
+  description: Create a Data API key in your <a href="/user/developer/api">developer console</a>
+    — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side;
+    they are never meant for client-side embedding.
+  sources:
+  - openapi/bitculator-data-api-openapi.json

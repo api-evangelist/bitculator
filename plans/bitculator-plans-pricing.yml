@@ -1,0 +1,48 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/crypto-api
+note: >-
+  Read from the public Data API landing/pricing page (HTTP 200, server-rendered). The page states
+  "Prices are provisional launch figures. Quotas and rate limits are firm." The API quota is fully
+  separate from the embed-widget quota (embeds ship their own 10,000 free loads/month).
+plan_count: 3
+currency: USD
+plans:
+  - name: Free
+    price: 0
+    billing: forever
+    monthly_quota: 10000
+    burst_per_minute: 30
+    per_page_cap: 100
+    api_keys: 2
+    endpoints_included: 55
+    support: Community
+    note: No card required; full API surface exploration with plan-gated endpoints/windows above 55 endpoints.
+  - name: Starter
+    price: 9.99
+    billing: monthly
+    yearly_price: 99.99
+    monthly_quota: 50000
+    burst_per_minute: 60
+    per_page_cap: 250
+    api_keys: 5
+    endpoints_included: 67
+    support: Email
+    note: '"For production apps - five times the quota and premium indicator windows."'
+  - name: Pro
+    price: 29.99
+    billing: monthly
+    yearly_price: 299.99
+    monthly_quota: 250000
+    burst_per_minute: 120
+    per_page_cap: 250
+    api_keys: 10
+    endpoints_included: 76
+    support: Priority
+    note: '"Most popular. For data-hungry platforms - our highest request quota and priority support."'
+metering:
+  unit: request
+  detail: >-
+    Every call costs exactly 1 request — "no credits, no compute units". MCP tool calls draw from
+    the same pool (handshake free). Plan-gated endpoints return plan_required rather than
+    consuming quota upgrades.

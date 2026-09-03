@@ -1,0 +1,162 @@
+generated: '2026-09-03'
+method: derived
+source: >-
+  https://bitculator.com/en/documentation/mcp/v1 (tool reference) x
+  openapi/bitculator-data-api-openapi.json (85 operations)
+note: >-
+  The provider's MCP docs state "Parameters mirror the corresponding Data API endpoints — same
+  validation, same plan gates, same decimal-string precision", so bindings are by documented
+  name/semantics; the live MCP inputSchemas are behind an API key (tools/list returned 401
+  unauthenticated on 2026-09-03), which caps confidence at the documentation's word.
+surfaces:
+  openapi: openapi/bitculator-data-api-openapi.json
+  mcp:
+    url: https://bitculator.com/mcp
+    gated: true
+    auth: api-key (Bearer, data-api ability)
+crosswalk:
+  - tool: search_coins
+    category: market-data
+    rest: [listCoins]
+    binding: semantic
+    confidence: medium
+    note: >-
+      The MCP docs call it "the entry point" resolving free-text to slugs; the closest REST surface
+      is GET /coins (listCoins) — the REST API exposes no dedicated free-text search operation, so
+      this tool may add server-side matching on top of the listing.
+  - tool: get_coin
+    category: market-data
+    rest: [getCoinDetail]
+    binding: name+semantic
+    confidence: high
+  - tool: get_prices
+    category: market-data
+    rest: [getPrices]
+    binding: name+semantic
+    confidence: high
+  - tool: get_top_movers
+    category: market-data
+    rest: [topGainers, topLosers]
+    binding: semantic
+    confidence: high
+    note: direction parameter selects between the two REST operations.
+  - tool: get_trending_coins
+    category: market-data
+    rest: [trendingCoins]
+    binding: name+semantic
+    confidence: high
+  - tool: get_price_history
+    category: history
+    rest: [candleHistory]
+    binding: semantic
+    confidence: high
+    note: Retention windows in the tool description match the candleHistory docs verbatim.
+  - tool: get_historical_price
+    category: history
+    rest: [historicalPrice]
+    binding: name+semantic
+    confidence: high
+  - tool: get_global_history
+    category: history
+    rest: [globalMarketcapVolumeHistory]
+    binding: semantic
+    confidence: high
+    note: metric parameter maps to the REST {metric} path segment (marketcap|volume).
+  - tool: get_global_market
+    category: sentiment-global
+    rest: [globalMarketSnapshot]
+    binding: semantic
+    confidence: high
+  - tool: get_fear_greed
+    category: sentiment-global
+    rest: [fearGreedIndex]
+    binding: name+semantic
+    confidence: high
+  - tool: get_altseason_index
+    category: sentiment-global
+    rest: [altseasonIndex]
+    binding: name+semantic
+    confidence: high
+  - tool: get_liquidations_summary
+    category: sentiment-global
+    rest: [todaysLiquidationSummary]
+    binding: name+semantic
+    confidence: high
+  - tool: list_exchanges
+    category: exchanges
+    rest: [listExchanges]
+    binding: name+semantic
+    confidence: high
+  - tool: get_exchange
+    category: exchanges
+    rest: [getExchangeDetail]
+    binding: name+semantic
+    confidence: high
+  - tool: get_exchange_trust_score
+    category: exchanges
+    rest: [getExchangeTrustScore]
+    binding: name+semantic
+    confidence: high
+  - tool: get_coin_markets
+    category: exchanges
+    rest: [coinMarkets]
+    binding: name+semantic
+    confidence: high
+  - tool: get_coin_technicals
+    category: analysis
+    rest: [indicatorSnapshot]
+    binding: semantic
+    confidence: high
+    note: >-
+      One-call indicator snapshot; the 13 per-indicator REST operations (rSIRelativeStrengthIndex,
+      mACD, sMASimpleMovingAverage, ...) remain REST-only for windowed series.
+  - tool: convert_currency
+    category: utility
+    rest: [convertBetweenAssets]
+    binding: semantic
+    confidence: high
+  - tool: calculate_dca
+    category: utility
+    rest: [dCACalculator]
+    binding: name+semantic
+    confidence: high
+mcp_only: []
+rest_only:
+  - operations: [recentlyAddedCoins, marketcapHistory, coinSparkline, getACoinPrice, coinTradingSymbols]
+    reason: Coin listing/series variants not curated into MCP tools.
+  - operations: [listTickers, listPairs, getPairDetail]
+    reason: Raw ticker/pair feeds — high-volume surfaces left to the REST API.
+  - operations: [exchangeHistory, exchangeSparkline, exchangeMarkets, exchangeCoins]
+    reason: Per-exchange series and listings beyond the curated exchange tools.
+  - operations: [listWallets, walletReleaseTimeline, compareWallets, getWalletDetail, walletSupportedCoins]
+    reason: The whole Wallets group has no MCP tool.
+  - operations: [marketHeatmap]
+    reason: Visual/heatmap aggregate not exposed as a tool.
+  - operations: [communityVoteTallies, castASentimentVote, bullBearIndex, marketIndicatorTally]
+    reason: >-
+      Vote tallies, the write-side sentiment vote, and two market-wide sentiment reads are not
+      tools — the MCP surface is strictly read-only and curates one sentiment index per concept.
+  - operations: [rSIRelativeStrengthIndex, stochasticRSI, sMASimpleMovingAverage, cCICommodityChannelIndex,
+                 mFIMoneyFlowIndex, williamsR, priceVolatility, volumeVolatility, mACD, oBVOnBalanceVolume,
+                 aDXAverageDirectionalIndex, vWAPVolumeWeightedAveragePrice, cMFChaikinMoneyFlow]
+    reason: Thirteen per-indicator series endpoints collapsed into the single get_coin_technicals snapshot tool.
+  - operations: [liquidationFeed, hourlyLiquidations, dailyLiquidations, liquidationNetflow, topLiquidatedCoins]
+    reason: Only the daily summary is a tool; the raw and aggregate liquidation feeds are REST-only.
+  - operations: [listFiatCurrencies, listConversionRates]
+    reason: Conversion reference lists not exposed as tools.
+  - operations: [profitLossCalculator, compoundInterestCalculator, loanVsSellCalculator, stakingRewardsCalculator]
+    reason: Only the DCA calculator made the curated tool set.
+  - operations: [coinVideos, coinInsightTimeline, listArticles, getAnArticle, submitArticleFeedback, getAVideo, listInsights, getAnInsight]
+    reason: The Editorial group (and its feedback write) has no MCP tools.
+  - operations: [listAlarms, createAnAlarm, deleteAnAlarm, listWebhookEndpoints, createAWebhookEndpoint,
+                 deleteAWebhookEndpoint, sendATestEvent, webhookDeliveryLog]
+    reason: Alarms and Webhooks are account-mutating surfaces — excluded from the read-only MCP server.
+  - operations: [openAPISpec, ping, keyUsageQuota]
+    reason: Meta endpoints (spec, health, quota introspection) are not tools.
+coverage:
+  mcp_tools: 19
+  tools_bound: 19
+  openapi_operations: 85
+  operations_bound: 20
+  rest_only_operations: 65
+  mcp_only_tools: 0

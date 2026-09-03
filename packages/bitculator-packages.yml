@@ -1,0 +1,109 @@
+generated: '2026-09-03'
+method: searched
+source: https://bitculator.com/en/crypto-api
+note: >-
+  Eight first-party SDKs announced on the API landing page ("One API. Eight official SDKs...
+  MIT-licensed and open source"), all living under github.com/Bitculator. Every registry answered
+  and every package sits at 1.0.1 published 2026-07-10 — a coordinated launch release matching the
+  API's 1.0.0 contract. A ninth repo (bitculator-integrations) carries the Google Sheets / Excel
+  spreadsheet connectors, distributed as paste-in scripts rather than a registry package.
+packages:
+  - name: '@bitculator/sdk'
+    registry: npm
+    language: TypeScript
+    official: true
+    version: 1.0.1
+    published: '2026-07-10'
+    url: https://www.npmjs.com/package/@bitculator/sdk
+    source_code: https://github.com/Bitculator/bitculator-typescript-sdk
+    install: npm install @bitculator/sdk
+    note: Node, Deno and browsers. Verified via registry.npmjs.org (HTTP 200).
+  - name: bitculator
+    registry: pypi
+    language: Python
+    official: true
+    version: 1.0.1
+    published: '2026-07-10'
+    url: https://pypi.org/project/bitculator/
+    source_code: https://github.com/Bitculator/bitculator-python-sdk
+    install: pip install bitculator
+    note: Python 3.9+, zero dependencies. Verified via pypi.org JSON API (HTTP 200).
+  - name: bitculator/sdk
+    registry: packagist
+    language: PHP
+    official: true
+    version: 1.0.1
+    published: '2026-07-10'
+    url: https://packagist.org/packages/bitculator/sdk
+    source_code: https://github.com/Bitculator/bitculator-php-sdk
+    install: composer require bitculator/sdk
+    note: PHP 8.1+, zero dependencies. Verified via repo.packagist.org p2 metadata (HTTP 200).
+  - name: github.com/bitculator/bitculator-go-sdk
+    registry: go
+    language: Go
+    official: true
+    version: v1.0.1
+    published: '2026-07-10'
+    url: https://pkg.go.dev/github.com/bitculator/bitculator-go-sdk
+    source_code: https://github.com/Bitculator/bitculator-go-sdk
+    install: go get github.com/bitculator/bitculator-go-sdk
+    note: Go 1.23+, stdlib only. Verified via proxy.golang.org @latest (HTTP 200).
+  - name: bitculator
+    registry: crates
+    language: Rust
+    official: true
+    version: 1.0.1
+    published: '2026-07-10'
+    url: https://crates.io/crates/bitculator
+    source_code: https://github.com/Bitculator/bitculator-rust-sdk
+    install: cargo add bitculator
+    note: Rust 2021 edition. Verified via crates.io API (HTTP 200).
+  - name: com.bitculator:bitculator
+    registry: maven
+    language: Java
+    official: true
+    version: 1.0.1
+    published: '2026-07-10'
+    url: https://central.sonatype.com/artifact/com.bitculator/bitculator
+    source_code: https://github.com/Bitculator/bitculator-java-sdk
+    install: 'com.bitculator:bitculator:1.0.1'
+    note: >-
+      Java 17+, Jackson. Verified via repo1.maven.org maven-metadata.xml (HTTP 200,
+      lastUpdated 20260710171922).
+  - name: Bitculator
+    registry: nuget
+    language: 'C#'
+    official: true
+    version: 1.0.1
+    published: '2026-07-10'
+    url: https://www.nuget.org/packages/Bitculator
+    source_code: https://github.com/Bitculator/bitculator-dotnet-sdk
+    install: dotnet add package Bitculator
+    note: net8.0, zero dependencies. Verified via api.nuget.org registration (HTTP 200).
+  - name: bitculator-cpp-sdk
+    registry: github
+    language: C++
+    official: true
+    version: null
+    published: null
+    url: https://github.com/Bitculator/bitculator-cpp-sdk
+    source_code: https://github.com/Bitculator/bitculator-cpp-sdk
+    install: 'CMake FetchContent: bitculator-cpp-sdk'
+    note: >-
+      C++17 header-only SDK distributed straight from GitHub via CMake FetchContent — no package
+      registry, so there is no registry metadata endpoint to read a version from. The repo's last
+      push (2026-07-10) matches the other seven SDK releases.
+  - name: bitculator-integrations
+    registry: github
+    language: JavaScript
+    official: true
+    version: null
+    published: null
+    url: https://github.com/Bitculator/bitculator-integrations
+    source_code: https://github.com/Bitculator/bitculator-integrations
+    install: paste-in Apps Script (Google Sheets) / Power Query (Excel)
+    note: >-
+      Spreadsheet connectors — Google Sheets custom functions (=BITCULATOR_PRICE(),
+      =BITCULATOR_HISTORY(), =BITCULATOR_FEARGREED()) and Excel Power Query / Office Scripts.
+      Distributed as paste-in scripts, not a registry package: version null with this note, checked
+      2026-09-03.
