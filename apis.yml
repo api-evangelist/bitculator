@@ -108,6 +108,8 @@ generated:
   confidence: 95
   at: '2026-07-05T18:54:54.185Z'
 common:
+- type: Website
+  url: https://www.bitculator.com/
 - type: Authentication
   url: authentication/bitculator-authentication.yml
 - type: DomainSecurity
