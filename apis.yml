@@ -55,49 +55,358 @@ tags_raw:
   - sentiment
   - indicators
 apis:
-  - name: Bitculator Data API
-    description: >-
-      REST API for cryptocurrency market data. JSON responses with Laravel-style pagination, HTTP Bearer auth,
-      quota-based Free/Starter/Pro plans, and signed webhook deliveries. OpenAPI 3.0.3 contract.
-    humanURL: https://bitculator.com/en/documentation/api/v1
-    baseURL: https://bitculator.com/api/v1
-    tags:
-      - Cryptocurrency
-      - crypto-market-data
-      - Blockchain
-      - Finance
-      - Fintech
-      - Web3
-      - Trading
-      - Exchange Data
-      - Wallets
-      - Sentiment
-      - Indicators
-    tags_raw:
-      - cryptocurrency
-      - crypto market data
-      - blockchain
-      - finance
-      - fintech
-      - web3
-      - trading
-      - exchange data
-      - wallets
-      - sentiment
-      - indicators
-    properties:
-      - type: OpenAPI
-        url: https://bitculator.com/api/v1/openapi.json
-      - type: OpenAPI
-        url: openapi/bitculator-data-api-openapi.json
-      - type: Documentation
-        url: https://bitculator.com/en/documentation/api/v1
-      - type: APIReference
-        url: https://bitculator.com/en/documentation/api/v1
-      - type: Overlay
-        url: overlays/bitculator-data-api-overlay.yaml
-      - type: Postman
-        url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-alarms-api
+  name: Bitculator Alarms API
+  description: >-
+    Price-alarm CRUD — the same alarms the web app manages. Alarms consume the key
+
+    owner's alarm inventory balance, are TARGET-type on coins only, and an above/below
+
+    vs current-value guard blocks alarms that would self-trigger instantly. Key-scoped
+
+    (the API key sets the owner) and never response-cached.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Alarms
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-alarms-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-calculators-api
+  name: Bitculator Calculators API
+  description: >-
+    Server-side financial calculators mirroring the web tools: DCA, profit/loss and
+
+    loan (which read cached market data), plus stateless compound-interest and staking
+
+    math.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Calculators
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-calculators-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-coins-api
+  name: Bitculator Coins API
+  description: >-
+    Ranked coin and token market data: paginated listings, single-coin detail, movers
+
+    (gainers/losers), recently-added, trending, and per-coin time series. Prices,
+
+    marketcap and supply are decimal STRINGS (floats can't carry market precision);
+
+    percentage changes, ranks and counts are numbers.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Coins
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-coins-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-conversion-api
+  name: Bitculator Conversion API
+  description: >-
+    Convert between any two active assets (crypto AND fiat), and list the currencies
+
+    usable as conversion legs. Values are decimal strings. Fiat FX rates refresh
+
+    ~twice daily; crypto rates ~every minute.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Conversion
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-conversion-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-editorial-api
+  name: Bitculator Editorial API
+  description: >-
+    Editorial articles — published (ACTIVE) only. `locale` picks the content language
+
+    with per-field English fallback (the payload reports which `locale` actually won).
+
+    Articles can be filtered by tag or by a related coin/exchange/wallet slug. API
+
+    reads deliberately do NOT increment view counts.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Editorial
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-editorial-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-exchanges-api
+  name: Bitculator Exchanges API
+  description: >-
+    Exchange rankings, detail, trust scores, time series and per-exchange market/coin
+
+    listings. Volumes are USD. There is no CEX/DEX column — `type` is derived from the
+
+    exchange taxonomy, so it can be "cex", "dex" or null.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Exchanges
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-exchanges-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-global-market-api
+  name: Bitculator Global Market API
+  description: >-
+    Market-wide aggregates — total marketcap and volume, asset/exchange/pair/market
+
+    counts, BTC/ETH dominance with a rank-based top-3, the market Fear & Greed reading,
+
+    plus a top-100 heatmap and marketcap/volume history.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Global Market
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-global-market-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-indicators-api
+  name: Bitculator Indicators API
+  description: >-
+    Per-coin technical indicators. Each indicator is its own dedicated endpoint —
+
+    momentum oscillators (RSI, Stoch-RSI, CCI, MFI, Williams %R), trend and price
+
+    baselines (SMA, MACD, VWAP), volume flow (OBV, CMF), trend strength (ADX) and
+
+    volatility — plus a single multi-indicator snapshot. Every family is a DAILY
+
+    series computed from daily candles (full retention; young assets return leading
+
+    warm-up `null`s until enough history exists). Price-scale families (SMA, VWAP,
+
+    MACD, OBV) emit decimal strings; bounded oscillators emit numbers. A few
+
+    long-window periods require a paid plan — noted on each endpoint.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Indicators
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-indicators-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-liquidations-api
+  name: Bitculator Liquidations API
+  description: >-
+    Derivatives liquidations. Source coverage is currently OKX swap markets only
+
+    (stated in every `meta.note`). The RAW feed (the `/liquidations` list and the
+
+    hourly breakdown) is pruned after ~48 hours; daily rollups are kept forever.
+
+    Today's aggregates are partial and update every ~15 minutes.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Liquidations
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-liquidations-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-markets-api
+  name: Bitculator Markets API
+  description: >-
+    Tickers (per-exchange markets) and pairs (venue-aggregated markets), plus a coin's
+
+    markets and raw per-exchange trading symbols. All of it is snapshot data — no
+
+    per-ticker/pair history exists. USD volumes are numbers; prices are decimal strings.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Markets
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-markets-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-meta-api
+  name: Bitculator Meta API
+  description: >-
+    API meta and introspection: an authenticated ping to verify a key and the
+
+    middleware stack, current-key usage/quota, and the machine-readable OpenAPI spec.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Meta
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-meta-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-prices-api
+  name: Bitculator Prices API
+  description: >-
+    The lightweight price hot path — current price, marketcap, 24h volume and recent
+
+    changes for a requested set of coins. `/prices` requires a selector (ids, slugs or
+
+    symbols); `/prices/{slug}` targets one coin. Optionally `convert` into a fiat
+
+    currency (crypto prices refresh ~every minute, fiat FX ~twice daily). Prices and
+
+    marketcap are decimal strings.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Prices
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-prices-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-sentiment-api
+  name: Bitculator Sentiment API
+  description: >-
+    Market and per-coin sentiment indices. Fear & Greed and Bull/Bear are
+
+    15-minute-refresh SNAPSHOTS — only the current reading exists, there is no time
+
+    series for them. Altseason carries full daily history. `indicators` is the
+
+    market-wide technical tally.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Sentiment
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-sentiment-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-wallets-api
+  name: Bitculator Wallets API
+  description: >-
+    Crypto wallet reviews — review `score`, supported-asset count, pros/cons counts,
+
+    price model and release date, plus a grouped tag taxonomy on detail/compare
+
+    responses. `meta.top_score` is the highest score across all wallets (use it to
+
+    normalize scores into a 0–1 range).
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Wallets
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-wallets-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
+- aid: bitculator:bitculator-webhooks-api
+  name: Bitculator Webhooks API
+  description: >-
+    Bitculator POSTs each event as JSON with an HMAC signature header:
+
+        X-Bitculator-Signature: t=<unix-ts>,v1=<hex hmac_sha256("<ts>.<raw-body>", secret)>
+        X-Bitculator-Event: alarm.triggered
+
+    Verify it by recomputing the HMAC over "<t>.<raw request body>" with your
+
+    endpoint secret and comparing in constant time; reject if `t` is older than a
+
+    few minutes (replay guard). Example (PHP):
+
+        [$t, $v1] = sscanf($_SERVER['HTTP_X_BITCULATOR_SIGNATURE'], 't=%d,v1=%s');
+        $expected = hash_hmac('sha256', $t.'.'.file_get_contents('php://input'), $secret);
+        abort_unless(hash_equals($expected, $v1) && abs(time() - $t) < 300, 403);
+
+    Supported events: `alarm.triggered`. Deliveries retry 3× with backoff; an
+
+    endpoint auto-disables after 10 consecutive failed deliveries.
+  humanURL: https://bitculator.com/en/documentation/api/v1
+  baseURL: https://bitculator.com/api/v1
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/bitculator-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: APIReference
+    url: https://bitculator.com/en/documentation/api/v1
+  - type: Postman
+    url: https://bitculator.com/documentation/api/v1.postman
 maintainers:
   - FN: Bitculator
     url: https://bitculator.com
@@ -108,6 +417,8 @@ generated:
   confidence: 95
   at: '2026-07-05T18:54:54.185Z'
 common:
+- type: Overlay
+  url: overlays/bitculator-data-api-overlay.yaml
 - type: Website
   url: https://www.bitculator.com/
 - type: Authentication
