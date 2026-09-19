@@ -177,6 +177,8 @@ apis:
   humanURL: https://bitculator.com/en/documentation/api/v1
   baseURL: https://bitculator.com/api/v1
   tags:
+  - Exchange
+  tags_raw:
   - Exchanges
   properties:
   - type: OpenAPI
@@ -397,6 +399,8 @@ apis:
   humanURL: https://bitculator.com/en/documentation/api/v1
   baseURL: https://bitculator.com/api/v1
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
