@@ -1,0 +1,1021 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Exchanges API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Exchanges
+  description: 'Exchange rankings, detail, trust scores, time series and per-exchange market/coin
+
+    listings. Volumes are USD. There is no CEX/DEX column — `type` is derived from the
+
+    exchange taxonomy, so it can be "cex", "dex" or null.'
+paths:
+  /api/v1/exchanges:
+    get:
+      summary: List exchanges
+      operationId: listExchanges
+      description: 'Ranked exchanges with 24h volume, dominance, pair/asset counts and recent
+
+        changes. Paginated with Laravel''s `links` + `meta` envelope.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: type
+        description: 'Restrict to a venue type: cex or dex (resolved via the exchange taxonomy).'
+        example: cex
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Restrict to a venue type: cex or dex (resolved via the exchange taxonomy).'
+          example: cex
+          enum:
+          - cex
+          - dex
+      - in: query
+        name: search
+        description: Free-text match on exchange name. Must not be greater than 100 characters.
+        example: binance
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on exchange name. Must not be greater than 100 characters.
+          example: binance
+      - in: query
+        name: min_pairs
+        description: Only exchanges listing at least this many pairs. Must be at least 0.
+        example: 100
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only exchanges listing at least this many pairs. Must be at least 0.
+          example: 100
+      - in: query
+        name: max_pairs
+        description: Only exchanges listing at most this many pairs. Must be at least 0.
+        example: 2000
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only exchanges listing at most this many pairs. Must be at least 0.
+          example: 2000
+      - in: query
+        name: min_assets
+        description: Only exchanges listing at least this many assets. Must be at least 0.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only exchanges listing at least this many assets. Must be at least 0.
+          example: 50
+      - in: query
+        name: max_assets
+        description: Only exchanges listing at most this many assets. Must be at least 0.
+        example: 1000
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only exchanges listing at most this many assets. Must be at least 0.
+          example: 1000
+      - in: query
+        name: min_volume
+        description: Only exchanges with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only exchanges with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only exchanges with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only exchanges with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: ids
+        description: Filter to specific exchange ids (CSV, up to 100). Must not be greater than 1000 characters.
+        example: 1,12
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific exchange ids (CSV, up to 100). Must not be greater than 1000 characters.
+          example: 1,12
+      - in: query
+        name: slugs
+        description: Filter to specific exchange slugs (CSV, up to 100). Must not be greater than 2000 characters.
+        example: binance-exchange,gateio
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific exchange slugs (CSV, up to 100). Must not be greater than 2000 characters.
+          example: binance-exchange,gateio
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: volume, rank, volume_dominance, change_24h, change_7d, pairs, assets. Must not be greater than 100 characters.'
+        example: -volume
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: volume, rank, volume_dominance, change_24h, change_7d, pairs, assets. Must not be greater than 100 characters.'
+          example: -volume
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - id: 1
+                    slug: binance-exchange
+                    name: Binance
+                    rank: 1
+                    volume_24h: 6152385798
+                    volume_dominance: 36.98
+                    change_24h: 200.09
+                    change_7d: 22.87
+                    change_rank_24h: 0
+                    change_rank_7d: 0
+                    pairs: 1115
+                    assets: 100
+                    logo: https://bitculator.com/storage/media/logo/binance.png
+                    last_updated: '2026-06-15T16:59:21+00:00'
+                  links:
+                    first: https://bitculator.com/api/v1/exchanges?page=1
+                    last: https://bitculator.com/api/v1/exchanges?page=1
+                    prev: null
+                    next: null
+                  meta:
+                    current_page: 1
+                    from: 1
+                    last_page: 1
+                    per_page: 50
+                    to: 10
+                    total: 10
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - id: 1
+                      slug: binance-exchange
+                      name: Binance
+                      rank: 1
+                      volume_24h: 6152385798
+                      volume_dominance: 36.98
+                      change_24h: 200.09
+                      change_7d: 22.87
+                      change_rank_24h: 0
+                      change_rank_7d: 0
+                      pairs: 1115
+                      assets: 100
+                      logo: https://bitculator.com/storage/media/logo/binance.png
+                      last_updated: '2026-06-15T16:59:21+00:00'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        slug:
+                          type: string
+                          example: binance-exchange
+                        name:
+                          type: string
+                          example: Binance
+                        rank:
+                          type: integer
+                          example: 1
+                        volume_24h:
+                          type: integer
+                          example: 6152385798
+                        volume_dominance:
+                          type: number
+                          example: 36.98
+                        change_24h:
+                          type: number
+                          example: 200.09
+                        change_7d:
+                          type: number
+                          example: 22.87
+                        change_rank_24h:
+                          type: integer
+                          example: 0
+                        change_rank_7d:
+                          type: integer
+                          example: 0
+                        pairs:
+                          type: integer
+                          example: 1115
+                        assets:
+                          type: integer
+                          example: 100
+                        logo:
+                          type: string
+                          example: https://bitculator.com/storage/media/logo/binance.png
+                        last_updated:
+                          type: string
+                          example: '2026-06-15T16:59:21+00:00'
+                  links:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                        example: https://bitculator.com/api/v1/exchanges?page=1
+                      last:
+                        type: string
+                        example: https://bitculator.com/api/v1/exchanges?page=1
+                      prev:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      next:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      from:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 1
+                      per_page:
+                        type: integer
+                        example: 50
+                      to:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 10
+      tags:
+      - Exchanges
+  /api/v1/exchanges/{slug}:
+    parameters:
+    - in: path
+      name: slug
+      description: The exchange slug.
+      example: binance-exchange
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get exchange detail
+      operationId: getExchangeDetail
+      description: 'Full single-exchange profile: ranking, volume/dominance, pair and asset counts,
+
+        `established` date, `location`, referral `website`, and the derived `type`
+
+        (cex/dex/null).'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    slug: binance-exchange
+                    name: Binance
+                    type: cex
+                    rank: 1
+                    volume_24h: 6152385798
+                    volume_dominance: 36.98
+                    change_24h: 200.09
+                    change_7d: 22.87
+                    change_rank_24h: 0
+                    change_rank_7d: 0
+                    pairs: 1115
+                    assets: 100
+                    established: '2017-07-14'
+                    location: Cayman Islands
+                    website: https://accounts.binance.com/register
+                    logo: https://bitculator.com/storage/media/logo/binance.png
+                    last_updated: '2026-06-15T16:59:21+00:00'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: binance-exchange
+                      name:
+                        type: string
+                        example: Binance
+                      type:
+                        type: string
+                        example: cex
+                      rank:
+                        type: integer
+                        example: 1
+                      volume_24h:
+                        type: integer
+                        example: 6152385798
+                      volume_dominance:
+                        type: number
+                        example: 36.98
+                      change_24h:
+                        type: number
+                        example: 200.09
+                      change_7d:
+                        type: number
+                        example: 22.87
+                      change_rank_24h:
+                        type: integer
+                        example: 0
+                      change_rank_7d:
+                        type: integer
+                        example: 0
+                      pairs:
+                        type: integer
+                        example: 1115
+                      assets:
+                        type: integer
+                        example: 100
+                      established:
+                        type: string
+                        example: '2017-07-14'
+                      location:
+                        type: string
+                        example: Cayman Islands
+                      website:
+                        type: string
+                        example: https://accounts.binance.com/register
+                      logo:
+                        type: string
+                        example: https://bitculator.com/storage/media/logo/binance.png
+                      last_updated:
+                        type: string
+                        example: '2026-06-15T16:59:21+00:00'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: Exchange not found.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: Exchange not found.
+      tags:
+      - Exchanges
+  /api/v1/exchanges/{slug}/trust-score:
+    parameters:
+    - in: path
+      name: slug
+      description: The exchange slug.
+      example: binance-exchange
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get exchange trust score
+      operationId: getExchangeTrustScore
+      description: 'An aggregate 0–10 trust `score` plus its 13-factor `breakdown` (rank, volume,
+
+        age, volume_trend, stability, rank_stability, ticker_health, pairs, community,
+
+        assets, dominance, market_breadth, transparency). Computed per exchange and
+
+        cached 24h.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    exchange: binance-exchange
+                    score: 8.3
+                    breakdown:
+                      rank: 10
+                      volume: 10
+                      age: 10
+                      volume_trend: 7
+                      stability: 3
+                      rank_stability: 10
+                      ticker_health: 8.6
+                      pairs: 9.6
+                      community: 6
+                      assets: 6.6
+                      dominance: 9.4
+                      market_breadth: 8
+                      transparency: 8.5
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      exchange:
+                        type: string
+                        example: binance-exchange
+                      score:
+                        type: number
+                        example: 8.3
+                      breakdown:
+                        type: object
+                        properties:
+                          rank:
+                            type: integer
+                            example: 10
+                          volume:
+                            type: integer
+                            example: 10
+                          age:
+                            type: integer
+                            example: 10
+                          volume_trend:
+                            type: integer
+                            example: 7
+                          stability:
+                            type: integer
+                            example: 3
+                          rank_stability:
+                            type: integer
+                            example: 10
+                          ticker_health:
+                            type: number
+                            example: 8.6
+                          pairs:
+                            type: number
+                            example: 9.6
+                          community:
+                            type: integer
+                            example: 6
+                          assets:
+                            type: number
+                            example: 6.6
+                          dominance:
+                            type: number
+                            example: 9.4
+                          market_breadth:
+                            type: integer
+                            example: 8
+                          transparency:
+                            type: number
+                            example: 8.5
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: Exchange not found.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: Exchange not found.
+      tags:
+      - Exchanges
+  /api/v1/exchanges/{slug}/history:
+    parameters:
+    - in: path
+      name: slug
+      description: The exchange slug.
+      example: binance-exchange
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Exchange history
+      operationId: exchangeHistory
+      description: 'Volume / dominance / pairs / assets time series (the exchange rollups carry no
+
+        OHLC). Pick `interval`: minutely, hourly or daily. Retention is a hard property
+
+        of the rollup pipeline — minutely 8 days, hourly 6 months, daily forever; when a
+
+        `limit` is set you get the most-recent N rows in the window, oldest-first.'
+      parameters:
+      - in: query
+        name: interval
+        description: minutely, hourly or daily (default daily).
+        example: daily
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: minutely, hourly or daily (default daily).
+          example: daily
+      - in: query
+        name: start
+        description: ISO date/time lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: ISO date/time lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date/time upper bound (a date-only value means through that day).
+        example: '2026-06-30'
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: ISO date/time upper bound (a date-only value means through that day).
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–2000, default 1000).
+        example: 30
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Max rows (1–2000, default 1000).
+          example: 30
+      responses: []
+      tags:
+      - Exchanges
+  /api/v1/exchanges/{slug}/sparkline:
+    parameters:
+    - in: path
+      name: slug
+      description: The exchange slug.
+      example: binance-exchange
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Exchange sparkline
+      operationId: exchangeSparkline
+      description: 'The exchange''s volume sparkline series for a period (defaults to 7d) — the same
+
+        series the web''s exchange rows render.
+
+
+        `points` is a sample of at most 480 readings, oldest first, each a `volume` at an
+
+        ISO-8601 `time`. `low` and `high` are the true extremes of the whole period — they
+
+        bound every point, but need not appear among the sampled ones. `change` is the move
+
+        across the period in PERCENT (`1.25` means +1.25%).'
+      parameters:
+      - in: query
+        name: period
+        description: One of `24h`, `7d` (default), `30d`, `60d`, `90d`, `180d`, `365d`.
+        example: 7d
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: One of `24h`, `7d` (default), `30d`, `60d`, `90d`, `180d`, `365d`.
+          example: 7d
+      responses: []
+      tags:
+      - Exchanges
+  /api/v1/exchanges/{slug}/tickers:
+    parameters:
+    - in: path
+      name: slug
+      description: The exchange slug.
+      example: binance-exchange
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Exchange markets
+      operationId: exchangeMarkets
+      description: 'The exchange''s ticker listings (its markets), paginated. Already scoped to the
+
+        exchange — do not pass an `exchange` parameter here.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: exchange
+        description: Restrict to a single exchange by slug (omit on the per-exchange listing, which is already scoped). Must match the regex /^[a-z0-9\-]{1,120}$/.
+        example: binance-exchange
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Restrict to a single exchange by slug (omit on the per-exchange listing, which is already scoped). Must match the regex /^[a-z0-9\-]{1,120}$/.
+          example: binance-exchange
+      - in: query
+        name: pair
+        description: Restrict to a single pair by id. Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Restrict to a single pair by id. Must be at least 1.
+          example: 1
+      - in: query
+        name: instrument
+        description: 'Instrument type: future, option, swap, spot or margin (plurals accepted).'
+        example: spot
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Instrument type: future, option, swap, spot or margin (plurals accepted).'
+          example: spot
+          enum:
+          - future
+          - option
+          - swap
+          - spot
+          - margin
+      - in: query
+        name: search
+        description: Free-text match on the ticker symbol. Must not be greater than 50 characters.
+        example: BTC
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on the ticker symbol. Must not be greater than 50 characters.
+          example: BTC
+      - in: query
+        name: min_volume
+        description: Only tickers with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only tickers with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: min_change
+        description: Only tickers with a 24h percentage change at or above this value.
+        example: -50
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with a 24h percentage change at or above this value.
+          example: -50
+      - in: query
+        name: max_change
+        description: Only tickers with a 24h percentage change at or below this value.
+        example: 50
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with a 24h percentage change at or below this value.
+          example: 50
+      - in: query
+        name: sort
+        description: 'A single sort field (prefix with - for descending). Sortable: volume_usd, change_24h, price_usd, updated. Defaults to -volume_usd. Must not be greater than 100 characters.'
+        example: -volume_usd
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'A single sort field (prefix with - for descending). Sortable: volume_usd, change_24h, price_usd, updated. Defaults to -volume_usd. Must not be greater than 100 characters.'
+          example: -volume_usd
+      responses: []
+      tags:
+      - Exchanges
+  /api/v1/exchanges/{slug}/assets:
+    parameters:
+    - in: path
+      name: slug
+      description: The exchange slug.
+      example: binance-exchange
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Exchange coins
+      operationId: exchangeCoins
+      description: 'Coins listed on the exchange, returned in the same shape as `List coins` and
+
+        accepting the same filters/sort.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: type
+        description: 'Restrict to a single asset type: coin or token.'
+        example: coin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Restrict to a single asset type: coin or token.'
+          example: coin
+          enum:
+          - coin
+          - token
+      - in: query
+        name: status
+        description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+        example: active
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+          example: active
+          enum:
+          - active
+          - delisted
+          - untracked
+          - progressing
+          - awaiting
+          - preparing
+      - in: query
+        name: search
+        description: Free-text match on name or symbol. Must not be greater than 100 characters.
+        example: bitcoin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on name or symbol. Must not be greater than 100 characters.
+          example: bitcoin
+      - in: query
+        name: min_price
+        description: Only coins priced at or above this USD value. Must be at least 0.
+        example: 0.5
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or above this USD value. Must be at least 0.
+          example: 0.5
+      - in: query
+        name: max_price
+        description: Only coins priced at or below this USD value. Must be at least 0.
+        example: 100000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or below this USD value. Must be at least 0.
+          example: 100000
+      - in: query
+        name: min_marketcap
+        description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_marketcap
+        description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+        example: 5000000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+          example: 5000000000000
+      - in: query
+        name: min_volume
+        description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: ids
+        description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+        example: 38,39
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+          example: 38,39
+      - in: query
+        name: slugs
+        description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+        example: bitcoin,ethereum
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+          example: bitcoin,ethereum
+      - in: query
+        name: symbols
+        description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+        example: BTC,ETH
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+          example: BTC,ETH
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+        example: -marketcap
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+          example: -marketcap
+      - in: query
+        name: interval
+        description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+        example: 24h
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+          example: 24h
+          enum:
+          - 24h
+          - 7d
+      responses: []
+      tags:
+      - Exchanges
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

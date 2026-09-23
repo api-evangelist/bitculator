@@ -1,0 +1,261 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Global Market API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Global Market
+  description: 'Market-wide aggregates — total marketcap and volume, asset/exchange/pair/market
+
+    counts, BTC/ETH dominance with a rank-based top-3, the market Fear & Greed reading,
+
+    plus a top-100 heatmap and marketcap/volume history.'
+paths:
+  /api/v1/global:
+    get:
+      summary: Global market snapshot
+      operationId: globalMarketSnapshot
+      description: 'One-shot market overview: total marketcap and 24h volume, counts of
+
+        cryptocurrencies / tokens / exchanges / pairs / markets, `dominance`
+
+        (BTC & ETH share plus the rank-based `top3`), and the market `fear_greed`
+
+        reading.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    total_marketcap: 2037527560616
+                    total_volume_24h: 83977305058
+                    total_cryptocurrencies: 134
+                    total_tokens: 50
+                    total_exchanges: 10
+                    total_pairs: 823
+                    total_markets: 4172
+                    dominance:
+                      btc: 62.07
+                      eth: 9.97
+                      top3:
+                      - symbol: BTC
+                        domination: 62.07
+                      - symbol: ETH
+                        domination: 9.97
+                      - symbol: USDT
+                        domination: 8.17
+                    fear_greed:
+                      score: 15
+                      regime: neutral
+                    last_updated: '2026-07-03T10:16:06+00:00'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total_marketcap:
+                        type: integer
+                        example: 2037527560616
+                      total_volume_24h:
+                        type: integer
+                        example: 83977305058
+                      total_cryptocurrencies:
+                        type: integer
+                        example: 134
+                      total_tokens:
+                        type: integer
+                        example: 50
+                      total_exchanges:
+                        type: integer
+                        example: 10
+                      total_pairs:
+                        type: integer
+                        example: 823
+                      total_markets:
+                        type: integer
+                        example: 4172
+                      dominance:
+                        type: object
+                        properties:
+                          btc:
+                            type: number
+                            example: 62.07
+                          eth:
+                            type: number
+                            example: 9.97
+                          top3:
+                            type: array
+                            example:
+                            - symbol: BTC
+                              domination: 62.07
+                            - symbol: ETH
+                              domination: 9.97
+                            - symbol: USDT
+                              domination: 8.17
+                            items:
+                              type: object
+                              properties:
+                                symbol:
+                                  type: string
+                                  example: BTC
+                                domination:
+                                  type: number
+                                  example: 62.07
+                      fear_greed:
+                        type: object
+                        properties:
+                          score:
+                            type: integer
+                            example: 15
+                          regime:
+                            type: string
+                            example: neutral
+                      last_updated:
+                        type: string
+                        example: '2026-07-03T10:16:06+00:00'
+      tags:
+      - Global Market
+  /api/v1/global/heatmap:
+    get:
+      summary: Market heatmap
+      operationId: marketHeatmap
+      description: 'Top-100 treemap rows plus framing stats (total marketcap/volume, dominance and
+
+        the market Fear & Greed score) — the API twin of the web heatmap.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - slug: bitcoin
+                    name: Bitcoin
+                    symbol: BTC
+                    price: '109731.2'
+                    marketcap: 2183456789012
+                    change_24h: 1.24
+                    change_7d: -2.31
+                    logo: https://bitculator.com/storage/media/assets/bitcoin-small.png
+                  meta:
+                    total_marketcap: 3456789012345
+                    total_volume_24h: 98765432109
+                    dominance:
+                      btc: 63.2
+                      eth: 9.1
+                      top3: 74.6
+                    fear_greed: 15
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - slug: bitcoin
+                      name: Bitcoin
+                      symbol: BTC
+                      price: '109731.2'
+                      marketcap: 2183456789012
+                      change_24h: 1.24
+                      change_7d: -2.31
+                      logo: https://bitculator.com/storage/media/assets/bitcoin-small.png
+                    items:
+                      type: object
+                      properties:
+                        slug:
+                          type: string
+                          example: bitcoin
+                        name:
+                          type: string
+                          example: Bitcoin
+                        symbol:
+                          type: string
+                          example: BTC
+                        price:
+                          type: string
+                          example: '109731.2'
+                        marketcap:
+                          type: integer
+                          example: 2183456789012
+                        change_24h:
+                          type: number
+                          example: 1.24
+                        change_7d:
+                          type: number
+                          example: -2.31
+                        logo:
+                          type: string
+                          example: https://bitculator.com/storage/media/assets/bitcoin-small.png
+                  meta:
+                    type: object
+                    properties:
+                      total_marketcap:
+                        type: integer
+                        example: 3456789012345
+                      total_volume_24h:
+                        type: integer
+                        example: 98765432109
+                      dominance:
+                        type: object
+                        properties:
+                          btc:
+                            type: number
+                            example: 63.2
+                          eth:
+                            type: number
+                            example: 9.1
+                          top3:
+                            type: number
+                            example: 74.6
+                      fear_greed:
+                        type: integer
+                        example: 15
+      tags:
+      - Global Market
+  /api/v1/global/history/{metric}:
+    parameters:
+    - in: path
+      name: metric
+      description: 'Which series: marketcap or volume.'
+      example: marketcap
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Global marketcap / volume history
+      operationId: globalMarketcapVolumeHistory
+      description: 'Total-market time series for `marketcap` or `volume`. Granularity follows the
+
+        `period`: 24h = half-hourly, 7d = hourly, 30d/all = daily (finer rollups are
+
+        pruned).'
+      parameters:
+      - in: query
+        name: period
+        description: 24h, 7d, 30d or all (default 24h).
+        example: 7d
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 24h, 7d, 30d or all (default 24h).
+          example: 7d
+      responses: []
+      tags:
+      - Global Market
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

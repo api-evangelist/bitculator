@@ -1,0 +1,723 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Calculators API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Calculators
+  description: 'Server-side financial calculators mirroring the web tools: DCA, profit/loss and
+
+    loan (which read cached market data), plus stateless compound-interest and staking
+
+    math.'
+paths:
+  /api/v1/calculators/dca:
+    get:
+      summary: DCA calculator
+      operationId: dCACalculator
+      description: 'Dollar-cost averaging backtest over the coin''s real daily price history: one buy
+
+        of `amount` per `interval` between `start` and `end`. Pass `series=true` to
+
+        include the full per-purchase series.'
+      parameters:
+      - in: query
+        name: slug
+        description: The coin's slug identifier.
+        example: bitcoin
+        required: true
+        schema:
+          type: string
+          description: The coin's slug identifier.
+          example: bitcoin
+      - in: query
+        name: amount
+        description: USD spent per purchase (0.01–1,000,000,000).
+        example: 100
+        required: true
+        schema:
+          type: number
+          description: USD spent per purchase (0.01–1,000,000,000).
+          example: 100
+      - in: query
+        name: interval
+        description: 'Purchase cadence: `daily`, `weekly`, `monthly`, `quarterly` or `yearly`.'
+        example: weekly
+        required: true
+        schema:
+          type: string
+          description: 'Purchase cadence: `daily`, `weekly`, `monthly`, `quarterly` or `yearly`.'
+          example: weekly
+      - in: query
+        name: start
+        description: date First purchase date (after 2008-12-31).
+        example: '2024-01-01'
+        required: true
+        schema:
+          type: string
+          description: date First purchase date (after 2008-12-31).
+          example: '2024-01-01'
+      - in: query
+        name: end
+        description: date Last purchase date (defaults to today).
+        example: '2025-01-01'
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: date Last purchase date (defaults to today).
+          example: '2025-01-01'
+      - in: query
+        name: series
+        description: Include the per-purchase series in the payload.
+        example: false
+        required: false
+        schema:
+          type:
+          - boolean
+          - 'null'
+          description: Include the per-purchase series in the payload.
+          example: false
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    summary:
+                      purchases: 53
+                      invested: 5300
+                      accumulated: 0.0754210998
+                      final_value: 7098.9
+                      profit: 1798.9
+                      roi: 33.94
+                    series: null
+                  meta:
+                    coin: bitcoin
+                    interval: weekly
+                    start: '2024-01-01'
+                    end: '2025-01-01'
+                    amount_per_buy: 100
+                    currency: USD
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      summary:
+                        type: object
+                        properties:
+                          purchases:
+                            type: integer
+                            example: 53
+                          invested:
+                            type: integer
+                            example: 5300
+                          accumulated:
+                            type: number
+                            example: 0.0754210998
+                          final_value:
+                            type: number
+                            example: 7098.9
+                          profit:
+                            type: number
+                            example: 1798.9
+                          roi:
+                            type: number
+                            example: 33.94
+                      series:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      interval:
+                        type: string
+                        example: weekly
+                      start:
+                        type: string
+                        example: '2024-01-01'
+                      end:
+                        type: string
+                        example: '2025-01-01'
+                      amount_per_buy:
+                        type: integer
+                        example: 100
+                      currency:
+                        type: string
+                        example: USD
+      tags:
+      - Calculators
+  /api/v1/calculators/profit-loss:
+    get:
+      summary: Profit / loss calculator
+      operationId: profitLossCalculator
+      description: 'What a buy-then-sell between two historical dates returned, using the coin''s real
+
+        prices on those dates. Fees are flat USD amounts, not percentages.'
+      parameters:
+      - in: query
+        name: slug
+        description: The coin's slug identifier.
+        example: bitcoin
+        required: true
+        schema:
+          type: string
+          description: The coin's slug identifier.
+          example: bitcoin
+      - in: query
+        name: amount
+        description: USD invested at `buy_date` (0.01–1,000,000,000).
+        example: 1000
+        required: true
+        schema:
+          type: number
+          description: USD invested at `buy_date` (0.01–1,000,000,000).
+          example: 1000
+      - in: query
+        name: buy_date
+        description: date Purchase date.
+        example: '2023-01-01'
+        required: true
+        schema:
+          type: string
+          description: date Purchase date.
+          example: '2023-01-01'
+      - in: query
+        name: sell_date
+        description: date Sale date (on/after `buy_date`).
+        example: '2025-01-01'
+        required: true
+        schema:
+          type: string
+          description: date Sale date (on/after `buy_date`).
+          example: '2025-01-01'
+      - in: query
+        name: buy_fee
+        description: Flat purchase fee in USD (default 0).
+        example: 10
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Flat purchase fee in USD (default 0).
+          example: 10
+      - in: query
+        name: sell_fee
+        description: Flat sale fee in USD (default 0).
+        example: 10
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Flat sale fee in USD (default 0).
+          example: 10
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    buy_price: '16625.08'
+                    sell_price: '93429.2'
+                    quantity: 0.0595486254
+                    investment_worth: 5563.58
+                    total_fees: 20
+                    profit: 4553.58
+                    roi: 455.36
+                  meta:
+                    coin: bitcoin
+                    amount: 1000
+                    buy_date: '2023-01-01'
+                    sell_date: '2025-01-01'
+                    buy_fee: 10
+                    sell_fee: 10
+                    currency: USD
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      buy_price:
+                        type: string
+                        example: '16625.08'
+                      sell_price:
+                        type: string
+                        example: '93429.2'
+                      quantity:
+                        type: number
+                        example: 0.0595486254
+                      investment_worth:
+                        type: number
+                        example: 5563.58
+                      total_fees:
+                        type: integer
+                        example: 20
+                      profit:
+                        type: number
+                        example: 4553.58
+                      roi:
+                        type: number
+                        example: 455.36
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      amount:
+                        type: integer
+                        example: 1000
+                      buy_date:
+                        type: string
+                        example: '2023-01-01'
+                      sell_date:
+                        type: string
+                        example: '2025-01-01'
+                      buy_fee:
+                        type: integer
+                        example: 10
+                      sell_fee:
+                        type: integer
+                        example: 10
+                      currency:
+                        type: string
+                        example: USD
+      tags:
+      - Calculators
+  /api/v1/calculators/compound-interest:
+    get:
+      summary: Compound interest calculator
+      operationId: compoundInterestCalculator
+      description: 'Pure math — no market data. Note that the rate applies PER COMPOUNDING PERIOD
+
+        (the web calculator''s convention), not per year.'
+      parameters:
+      - in: query
+        name: principal
+        description: Starting balance in USD.
+        example: 10000
+        required: true
+        schema:
+          type: number
+          description: Starting balance in USD.
+          example: 10000
+      - in: query
+        name: rate
+        description: Interest rate in % per compounding period.
+        example: 1
+        required: true
+        schema:
+          type: number
+          description: Interest rate in % per compounding period.
+          example: 1
+      - in: query
+        name: duration
+        description: Length of the projection (years are capped at 50).
+        example: 5
+        required: true
+        schema:
+          type: integer
+          description: Length of the projection (years are capped at 50).
+          example: 5
+      - in: query
+        name: duration_unit
+        description: '`years` (default) or `months`.'
+        example: years
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: '`years` (default) or `months`.'
+          example: years
+      - in: query
+        name: compound_frequency
+        description: '`daily`, `weekly`, `monthly` (default), `quarterly` or `annually`.'
+        example: monthly
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: '`daily`, `weekly`, `monthly` (default), `quarterly` or `annually`.'
+          example: monthly
+      - in: query
+        name: contribution
+        description: Recurring deposit in USD (default 0).
+        example: 100
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Recurring deposit in USD (default 0).
+          example: 100
+      - in: query
+        name: contribution_frequency
+        description: '`daily`, `weekly`, `monthly` (default), `quarterly` or `annually`.'
+        example: monthly
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: '`daily`, `weekly`, `monthly` (default), `quarterly` or `annually`.'
+          example: monthly
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    final_balance: 24471.19
+                    total_contributions: 16000
+                    total_interest: 8471.19
+                    roi: 52.94
+                  meta:
+                    note: The rate applies per compounding period (web calculator parity), not per year.
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      final_balance:
+                        type: number
+                        example: 24471.19
+                      total_contributions:
+                        type: integer
+                        example: 16000
+                      total_interest:
+                        type: number
+                        example: 8471.19
+                      roi:
+                        type: number
+                        example: 52.94
+                  meta:
+                    type: object
+                    properties:
+                      note:
+                        type: string
+                        example: The rate applies per compounding period (web calculator parity), not per year.
+      tags:
+      - Calculators
+  /api/v1/calculators/loan:
+    get:
+      summary: Loan vs sell calculator
+      operationId: loanVsSellCalculator
+      description: 'Borrow against crypto vs sell it — compares both scenarios using the coin''s
+
+        CURRENT price. Informational projection, not financial advice.'
+      parameters:
+      - in: query
+        name: slug
+        description: The coin's slug identifier.
+        example: bitcoin
+        required: true
+        schema:
+          type: string
+          description: The coin's slug identifier.
+          example: bitcoin
+      - in: query
+        name: crypto_amount
+        description: How much of the coin you hold.
+        example: 2
+        required: true
+        schema:
+          type: number
+          description: How much of the coin you hold.
+          example: 2
+      - in: query
+        name: needed_cash
+        description: USD you need to free up.
+        example: 50000
+        required: true
+        schema:
+          type: number
+          description: USD you need to free up.
+          example: 50000
+      - in: query
+        name: term_months
+        description: Loan term in months (default 36).
+        example: 36
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Loan term in months (default 36).
+          example: 36
+      - in: query
+        name: interest_rate
+        description: Loan APR in % (default 10).
+        example: 10
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Loan APR in % (default 10).
+          example: 10
+      - in: query
+        name: ltv
+        description: Loan-to-value ratio in % (default 50).
+        example: 50
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Loan-to-value ratio in % (default 50).
+          example: 50
+      - in: query
+        name: expected_growth
+        description: Expected coin price growth over the term in % (default 25).
+        example: 25
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Expected coin price growth over the term in % (default 25).
+          example: 25
+      - in: query
+        name: tax_rate
+        description: Capital-gains tax in % applied to the sale (default 25).
+        example: 25
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Capital-gains tax in % applied to the sale (default 25).
+          example: 25
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    current_price: '109731.2'
+                    collateral_value: 219462.4
+                    max_loan: 109731.2
+                    loan_possible: true
+                    loan_scenario:
+                      monthly_payment: 1613.4
+                      total_payback: 58082.4
+                      total_interest: 8082.4
+                      net_value: 216296.72
+                    sell_scenario:
+                      crypto_sold: 0.4556647344
+                      capital_gains_tax: 12500
+                      net_value: 230378.86
+                    better_scenario: sell
+                    opportunity_cost: 14082.14
+                    break_even_growth: 31.42
+                    risk_level: medium
+                  meta:
+                    coin: bitcoin
+                    currency: USD
+                    note: Informational projection — the tax model taxes the full proceeds (no cost basis), matching the web calculator.
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      current_price:
+                        type: string
+                        example: '109731.2'
+                      collateral_value:
+                        type: number
+                        example: 219462.4
+                      max_loan:
+                        type: number
+                        example: 109731.2
+                      loan_possible:
+                        type: boolean
+                        example: true
+                      loan_scenario:
+                        type: object
+                        properties:
+                          monthly_payment:
+                            type: number
+                            example: 1613.4
+                          total_payback:
+                            type: number
+                            example: 58082.4
+                          total_interest:
+                            type: number
+                            example: 8082.4
+                          net_value:
+                            type: number
+                            example: 216296.72
+                      sell_scenario:
+                        type: object
+                        properties:
+                          crypto_sold:
+                            type: number
+                            example: 0.4556647344
+                          capital_gains_tax:
+                            type: integer
+                            example: 12500
+                          net_value:
+                            type: number
+                            example: 230378.86
+                      better_scenario:
+                        type: string
+                        example: sell
+                      opportunity_cost:
+                        type: number
+                        example: 14082.14
+                      break_even_growth:
+                        type: number
+                        example: 31.42
+                      risk_level:
+                        type: string
+                        example: medium
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      currency:
+                        type: string
+                        example: USD
+                      note:
+                        type: string
+                        example: Informational projection — the tax model taxes the full proceeds (no cost basis), matching the web calculator.
+      tags:
+      - Calculators
+  /api/v1/calculators/staking:
+    get:
+      summary: Staking rewards calculator
+      operationId: stakingRewardsCalculator
+      description: 'Pure math — staking rewards with optional compounding and a validator
+
+        commission. No market data is read.'
+      parameters:
+      - in: query
+        name: amount
+        description: Amount staked, in the staked asset's units.
+        example: 1000
+        required: true
+        schema:
+          type: number
+          description: Amount staked, in the staked asset's units.
+          example: 1000
+      - in: query
+        name: period
+        description: Length of the staking period (capped at the 50-year equivalent).
+        example: 2
+        required: true
+        schema:
+          type: number
+          description: Length of the staking period (capped at the 50-year equivalent).
+          example: 2
+      - in: query
+        name: period_unit
+        description: '`years` (default), `months` or `days`.'
+        example: years
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: '`years` (default), `months` or `days`.'
+          example: years
+      - in: query
+        name: apy
+        description: Advertised APY in %.
+        example: 5
+        required: true
+        schema:
+          type: number
+          description: Advertised APY in %.
+          example: 5
+      - in: query
+        name: compound_frequency
+        description: '`never`, `daily`, `weekly`, `monthly` (default) or `yearly`.'
+        example: monthly
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: '`never`, `daily`, `weekly`, `monthly` (default) or `yearly`.'
+          example: monthly
+      - in: query
+        name: commission
+        description: Validator commission in %, taken from rewards (default 0).
+        example: 10
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Validator commission in %, taken from rewards (default 0).
+          example: 10
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    final_balance: 1094.42
+                    total_rewards: 94.42
+                    yearly_reward: 47.21
+                    monthly_reward: 3.93
+                    roi: 9.44
+                    risk_level: low
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      final_balance:
+                        type: number
+                        example: 1094.42
+                      total_rewards:
+                        type: number
+                        example: 94.42
+                      yearly_reward:
+                        type: number
+                        example: 47.21
+                      monthly_reward:
+                        type: number
+                        example: 3.93
+                      roi:
+                        type: number
+                        example: 9.44
+                      risk_level:
+                        type: string
+                        example: low
+      tags:
+      - Calculators
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

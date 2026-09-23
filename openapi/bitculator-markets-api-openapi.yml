@@ -1,0 +1,458 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Markets API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Markets
+  description: 'Tickers (per-exchange markets) and pairs (venue-aggregated markets), plus a coin''s
+
+    markets and raw per-exchange trading symbols. All of it is snapshot data — no
+
+    per-ticker/pair history exists. USD volumes are numbers; prices are decimal strings.'
+paths:
+  /api/v1/coins/{slug}/markets:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Coin markets
+      operationId: coinMarkets
+      description: 'All markets for a coin — the tickers whose pair has the coin as base OR quote.
+
+        Same row shape and filters as `List tickers`.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: exchange
+        description: Restrict to a single exchange by slug (omit on the per-exchange listing, which is already scoped). Must match the regex /^[a-z0-9\-]{1,120}$/.
+        example: binance-exchange
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Restrict to a single exchange by slug (omit on the per-exchange listing, which is already scoped). Must match the regex /^[a-z0-9\-]{1,120}$/.
+          example: binance-exchange
+      - in: query
+        name: pair
+        description: Restrict to a single pair by id. Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Restrict to a single pair by id. Must be at least 1.
+          example: 1
+      - in: query
+        name: instrument
+        description: 'Instrument type: future, option, swap, spot or margin (plurals accepted).'
+        example: spot
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Instrument type: future, option, swap, spot or margin (plurals accepted).'
+          example: spot
+          enum:
+          - future
+          - option
+          - swap
+          - spot
+          - margin
+      - in: query
+        name: search
+        description: Free-text match on the ticker symbol. Must not be greater than 50 characters.
+        example: BTC
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on the ticker symbol. Must not be greater than 50 characters.
+          example: BTC
+      - in: query
+        name: min_volume
+        description: Only tickers with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only tickers with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: min_change
+        description: Only tickers with a 24h percentage change at or above this value.
+        example: -50
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with a 24h percentage change at or above this value.
+          example: -50
+      - in: query
+        name: max_change
+        description: Only tickers with a 24h percentage change at or below this value.
+        example: 50
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with a 24h percentage change at or below this value.
+          example: 50
+      - in: query
+        name: sort
+        description: 'A single sort field (prefix with - for descending). Sortable: volume_usd, change_24h, price_usd, updated. Defaults to -volume_usd. Must not be greater than 100 characters.'
+        example: -volume_usd
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'A single sort field (prefix with - for descending). Sortable: volume_usd, change_24h, price_usd, updated. Defaults to -volume_usd. Must not be greater than 100 characters.'
+          example: -volume_usd
+      responses: []
+      tags:
+      - Markets
+  /api/v1/coins/{slug}/symbols:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Coin trading symbols
+      operationId: coinTradingSymbols
+      description: 'The coin''s raw per-exchange trading symbols — sparsely populated reference data
+
+        (coverage is best-effort).'
+      parameters: []
+      responses: []
+      tags:
+      - Markets
+  /api/v1/tickers:
+    get:
+      summary: List tickers
+      operationId: listTickers
+      description: 'Individual per-exchange markets (tickers), paginated. Filter by exchange, pair,
+
+        instrument and volume/change ranges. USD volumes are numbers; prices are decimal
+
+        strings.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: exchange
+        description: Restrict to a single exchange by slug (omit on the per-exchange listing, which is already scoped). Must match the regex /^[a-z0-9\-]{1,120}$/.
+        example: binance-exchange
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Restrict to a single exchange by slug (omit on the per-exchange listing, which is already scoped). Must match the regex /^[a-z0-9\-]{1,120}$/.
+          example: binance-exchange
+      - in: query
+        name: pair
+        description: Restrict to a single pair by id. Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Restrict to a single pair by id. Must be at least 1.
+          example: 1
+      - in: query
+        name: instrument
+        description: 'Instrument type: future, option, swap, spot or margin (plurals accepted).'
+        example: spot
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Instrument type: future, option, swap, spot or margin (plurals accepted).'
+          example: spot
+          enum:
+          - future
+          - option
+          - swap
+          - spot
+          - margin
+      - in: query
+        name: search
+        description: Free-text match on the ticker symbol. Must not be greater than 50 characters.
+        example: BTC
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on the ticker symbol. Must not be greater than 50 characters.
+          example: BTC
+      - in: query
+        name: min_volume
+        description: Only tickers with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only tickers with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: min_change
+        description: Only tickers with a 24h percentage change at or above this value.
+        example: -50
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with a 24h percentage change at or above this value.
+          example: -50
+      - in: query
+        name: max_change
+        description: Only tickers with a 24h percentage change at or below this value.
+        example: 50
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only tickers with a 24h percentage change at or below this value.
+          example: 50
+      - in: query
+        name: sort
+        description: 'A single sort field (prefix with - for descending). Sortable: volume_usd, change_24h, price_usd, updated. Defaults to -volume_usd. Must not be greater than 100 characters.'
+        example: -volume_usd
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'A single sort field (prefix with - for descending). Sortable: volume_usd, change_24h, price_usd, updated. Defaults to -volume_usd. Must not be greater than 100 characters.'
+          example: -volume_usd
+      responses: []
+      tags:
+      - Markets
+  /api/v1/pairs:
+    get:
+      summary: List pairs
+      operationId: listPairs
+      description: 'Venue-aggregated trading pairs, ranked by 24h USD volume. Filter by a coin slug
+
+        (base or quote) and volume range.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: search
+        description: Free-text match on the pair symbol. Must not be greater than 50 characters.
+        example: BTC
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on the pair symbol. Must not be greater than 50 characters.
+          example: BTC
+      - in: query
+        name: coin
+        description: Restrict to pairs where this coin slug is the base or quote asset. Must match the regex /^[a-z0-9\-]{1,120}$/.
+        example: bitcoin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Restrict to pairs where this coin slug is the base or quote asset. Must match the regex /^[a-z0-9\-]{1,120}$/.
+          example: bitcoin
+      - in: query
+        name: min_volume
+        description: Only pairs with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only pairs with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only pairs with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only pairs with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: sort
+        description: 'Sort field: volume_usd or updated (prefix with - for descending). Defaults to -volume_usd.'
+        example: -volume_usd
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Sort field: volume_usd or updated (prefix with - for descending). Defaults to -volume_usd.'
+          example: -volume_usd
+          enum:
+          - volume_usd
+          - -volume_usd
+          - updated
+          - -updated
+      responses: []
+      tags:
+      - Markets
+  /api/v1/pairs/{id}:
+    parameters:
+    - in: path
+      name: id
+      description: The pair id.
+      example: 1
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Get pair detail
+      operationId: getPairDetail
+      description: One pair plus every exchange ticker listing it, ordered by volume.
+      parameters: []
+      responses:
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: Pair not found.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: Pair not found.
+      tags:
+      - Markets
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

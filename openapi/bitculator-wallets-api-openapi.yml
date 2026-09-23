@@ -1,0 +1,764 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Wallets API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Wallets
+  description: 'Crypto wallet reviews — review `score`, supported-asset count, pros/cons counts,
+
+    price model and release date, plus a grouped tag taxonomy on detail/compare
+
+    responses. `meta.top_score` is the highest score across all wallets (use it to
+
+    normalize scores into a 0–1 range).'
+paths:
+  /api/v1/wallets:
+    get:
+      summary: List wallets
+      operationId: listWallets
+      description: 'Reviewed wallets with score, asset count, pros/cons counts, price model, status
+
+        and release date. Paginated with Laravel''s `links` + `meta` envelope, plus
+
+        `meta.top_score`.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: search
+        description: Free-text match on wallet name. Must not be greater than 100 characters.
+        example: ledger
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on wallet name. Must not be greater than 100 characters.
+          example: ledger
+      - in: query
+        name: min_score
+        description: Only wallets with a review score at or above this value. Must be at least 0.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only wallets with a review score at or above this value. Must be at least 0.
+          example: 50
+      - in: query
+        name: max_score
+        description: Only wallets with a review score at or below this value. Must be at least 0.
+        example: 214
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only wallets with a review score at or below this value. Must be at least 0.
+          example: 214
+      - in: query
+        name: tags
+        description: 'Filter by tag taxonomy: comma-separated category-group ids (the same ids the web facet filters submit). Must not be greater than 1000 characters.'
+        example: 12,34
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Filter by tag taxonomy: comma-separated category-group ids (the same ids the web facet filters submit). Must not be greater than 1000 characters.'
+          example: 12,34
+      - in: query
+        name: ids
+        description: Filter to specific wallet ids (CSV, up to 100). Must not be greater than 1000 characters.
+        example: 175,317
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific wallet ids (CSV, up to 100). Must not be greater than 1000 characters.
+          example: 175,317
+      - in: query
+        name: slugs
+        description: Filter to specific wallet slugs (CSV, up to 100). Must not be greater than 2000 characters.
+        example: frostsnap,coin98-fusion-card
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific wallet slugs (CSV, up to 100). Must not be greater than 2000 characters.
+          example: frostsnap,coin98-fusion-card
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: score, released_at, assets, pros, cons. Must not be greater than 100 characters.'
+        example: -score
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: score, released_at, assets, pros, cons. Must not be greater than 100 characters.'
+          example: -score
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - id: 317
+                    slug: frostsnap
+                    name: Frostsnap
+                    score: 125
+                    assets: 1
+                    pros: 18
+                    cons: 0
+                    price_model: paid
+                    status: Active
+                    released_at: null
+                    logo: https://bitculator.com/storage/media/logo/frostsnap.png
+                  links:
+                    first: https://bitculator.com/api/v1/wallets?page=1
+                    last: https://bitculator.com/api/v1/wallets?page=7
+                    prev: null
+                    next: https://bitculator.com/api/v1/wallets?page=2
+                  meta:
+                    current_page: 1
+                    from: 1
+                    last_page: 7
+                    per_page: 50
+                    to: 50
+                    total: 321
+                    top_score: 214
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - id: 317
+                      slug: frostsnap
+                      name: Frostsnap
+                      score: 125
+                      assets: 1
+                      pros: 18
+                      cons: 0
+                      price_model: paid
+                      status: Active
+                      released_at: null
+                      logo: https://bitculator.com/storage/media/logo/frostsnap.png
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 317
+                        slug:
+                          type: string
+                          example: frostsnap
+                        name:
+                          type: string
+                          example: Frostsnap
+                        score:
+                          type: integer
+                          example: 125
+                        assets:
+                          type: integer
+                          example: 1
+                        pros:
+                          type: integer
+                          example: 18
+                        cons:
+                          type: integer
+                          example: 0
+                        price_model:
+                          type: string
+                          example: paid
+                        status:
+                          type: string
+                          example: Active
+                        released_at:
+                          type:
+                          - string
+                          - 'null'
+                          example: null
+                        logo:
+                          type: string
+                          example: https://bitculator.com/storage/media/logo/frostsnap.png
+                  links:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                        example: https://bitculator.com/api/v1/wallets?page=1
+                      last:
+                        type: string
+                        example: https://bitculator.com/api/v1/wallets?page=7
+                      prev:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      next:
+                        type: string
+                        example: https://bitculator.com/api/v1/wallets?page=2
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      from:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 7
+                      per_page:
+                        type: integer
+                        example: 50
+                      to:
+                        type: integer
+                        example: 50
+                      total:
+                        type: integer
+                        example: 321
+                      top_score:
+                        type: integer
+                        example: 214
+      tags:
+      - Wallets
+  /api/v1/wallets/timeline:
+    get:
+      summary: Wallet release timeline
+      operationId: walletReleaseTimeline
+      description: 'The wallet list pinned to `released_at` descending (undated wallets last). Same
+
+        row shape and pagination envelope as `List wallets`.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: search
+        description: Free-text match on wallet name. Must not be greater than 100 characters.
+        example: ledger
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on wallet name. Must not be greater than 100 characters.
+          example: ledger
+      - in: query
+        name: min_score
+        description: Only wallets with a review score at or above this value. Must be at least 0.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only wallets with a review score at or above this value. Must be at least 0.
+          example: 50
+      - in: query
+        name: max_score
+        description: Only wallets with a review score at or below this value. Must be at least 0.
+        example: 214
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Only wallets with a review score at or below this value. Must be at least 0.
+          example: 214
+      - in: query
+        name: tags
+        description: 'Filter by tag taxonomy: comma-separated category-group ids (the same ids the web facet filters submit). Must not be greater than 1000 characters.'
+        example: 12,34
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Filter by tag taxonomy: comma-separated category-group ids (the same ids the web facet filters submit). Must not be greater than 1000 characters.'
+          example: 12,34
+      - in: query
+        name: ids
+        description: Filter to specific wallet ids (CSV, up to 100). Must not be greater than 1000 characters.
+        example: 175,317
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific wallet ids (CSV, up to 100). Must not be greater than 1000 characters.
+          example: 175,317
+      - in: query
+        name: slugs
+        description: Filter to specific wallet slugs (CSV, up to 100). Must not be greater than 2000 characters.
+        example: frostsnap,coin98-fusion-card
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific wallet slugs (CSV, up to 100). Must not be greater than 2000 characters.
+          example: frostsnap,coin98-fusion-card
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: score, released_at, assets, pros, cons. Must not be greater than 100 characters.'
+        example: -score
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: score, released_at, assets, pros, cons. Must not be greater than 100 characters.'
+          example: -score
+      responses: []
+      tags:
+      - Wallets
+  /api/v1/wallets/compare:
+    get:
+      summary: Compare wallets
+      operationId: compareWallets
+      description: 'Side-by-side comparison of 2–4 wallets with their full grouped tag taxonomy.
+
+        `data[]` preserves the requested slug order so consumers can render columns
+
+        positionally.'
+      parameters:
+      - in: query
+        name: slugs
+        description: 2–4 distinct wallet slugs, comma-separated.
+        example: frostsnap,coin98-fusion-card
+        required: true
+        schema:
+          type: string
+          description: 2–4 distinct wallet slugs, comma-separated.
+          example: frostsnap,coin98-fusion-card
+      responses: []
+      tags:
+      - Wallets
+  /api/v1/wallets/{slug}:
+    parameters:
+    - in: path
+      name: slug
+      description: The wallet slug.
+      example: frostsnap
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get wallet detail
+      operationId: getWalletDetail
+      description: 'Full single-wallet profile including the grouped tag taxonomy: `categories` is a
+
+        list of `{group, tags[]}` where each tag has a slug, name and optional value.
+
+        `meta.top_score` is the highest score across all wallets.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 317
+                    slug: frostsnap
+                    name: Frostsnap
+                    score: 125
+                    assets: 1
+                    pros: 18
+                    cons: 0
+                    price_model: paid
+                    status: Active
+                    released_at: null
+                    logo: https://bitculator.com/storage/media/logo/frostsnap.png
+                    website: https://frostsnap.com
+                    categories:
+                    - group: type
+                      tags:
+                      - slug: hardware
+                        name: Hardware
+                        value: null
+                    - group: storage
+                      tags:
+                      - slug: cold
+                        name: Cold
+                        value: null
+                  meta:
+                    top_score: 214
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 317
+                      slug:
+                        type: string
+                        example: frostsnap
+                      name:
+                        type: string
+                        example: Frostsnap
+                      score:
+                        type: integer
+                        example: 125
+                      assets:
+                        type: integer
+                        example: 1
+                      pros:
+                        type: integer
+                        example: 18
+                      cons:
+                        type: integer
+                        example: 0
+                      price_model:
+                        type: string
+                        example: paid
+                      status:
+                        type: string
+                        example: Active
+                      released_at:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      logo:
+                        type: string
+                        example: https://bitculator.com/storage/media/logo/frostsnap.png
+                      website:
+                        type: string
+                        example: https://frostsnap.com
+                      categories:
+                        type: array
+                        example:
+                        - group: type
+                          tags:
+                          - slug: hardware
+                            name: Hardware
+                            value: null
+                        - group: storage
+                          tags:
+                          - slug: cold
+                            name: Cold
+                            value: null
+                        items:
+                          type: object
+                          properties:
+                            group:
+                              type: string
+                              example: type
+                            tags:
+                              type: array
+                              example:
+                              - slug: hardware
+                                name: Hardware
+                                value: null
+                              items:
+                                type: object
+                                properties:
+                                  slug:
+                                    type: string
+                                    example: hardware
+                                  name:
+                                    type: string
+                                    example: Hardware
+                                  value:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    example: null
+                  meta:
+                    type: object
+                    properties:
+                      top_score:
+                        type: integer
+                        example: 214
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: Wallet not found.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: Wallet not found.
+      tags:
+      - Wallets
+  /api/v1/wallets/{slug}/assets:
+    parameters:
+    - in: path
+      name: slug
+      description: The wallet slug.
+      example: frostsnap
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Wallet supported coins
+      operationId: walletSupportedCoins
+      description: 'Coins the wallet supports, returned in the same shape as `List coins` and
+
+        accepting the same filters/sort.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: type
+        description: 'Restrict to a single asset type: coin or token.'
+        example: coin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Restrict to a single asset type: coin or token.'
+          example: coin
+          enum:
+          - coin
+          - token
+      - in: query
+        name: status
+        description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+        example: active
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+          example: active
+          enum:
+          - active
+          - delisted
+          - untracked
+          - progressing
+          - awaiting
+          - preparing
+      - in: query
+        name: search
+        description: Free-text match on name or symbol. Must not be greater than 100 characters.
+        example: bitcoin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on name or symbol. Must not be greater than 100 characters.
+          example: bitcoin
+      - in: query
+        name: min_price
+        description: Only coins priced at or above this USD value. Must be at least 0.
+        example: 0.5
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or above this USD value. Must be at least 0.
+          example: 0.5
+      - in: query
+        name: max_price
+        description: Only coins priced at or below this USD value. Must be at least 0.
+        example: 100000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or below this USD value. Must be at least 0.
+          example: 100000
+      - in: query
+        name: min_marketcap
+        description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_marketcap
+        description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+        example: 5000000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+          example: 5000000000000
+      - in: query
+        name: min_volume
+        description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: ids
+        description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+        example: 38,39
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+          example: 38,39
+      - in: query
+        name: slugs
+        description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+        example: bitcoin,ethereum
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+          example: bitcoin,ethereum
+      - in: query
+        name: symbols
+        description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+        example: BTC,ETH
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+          example: BTC,ETH
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+        example: -marketcap
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+          example: -marketcap
+      - in: query
+        name: interval
+        description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+        example: 24h
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+          example: 24h
+          enum:
+          - 24h
+          - 7d
+      responses: []
+      tags:
+      - Wallets
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

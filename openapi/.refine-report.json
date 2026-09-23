@@ -1,0 +1,48 @@
+{
+  "provider": "bitculator",
+  "sources": [
+    "_original/bitculator-data-api-openapi.json"
+  ],
+  "outputs": [
+    "bitculator-alarms-api-openapi.yml",
+    "bitculator-calculators-api-openapi.yml",
+    "bitculator-coins-api-openapi.yml",
+    "bitculator-conversion-api-openapi.yml",
+    "bitculator-editorial-api-openapi.yml",
+    "bitculator-exchanges-api-openapi.yml",
+    "bitculator-global-market-api-openapi.yml",
+    "bitculator-indicators-api-openapi.yml",
+    "bitculator-liquidations-api-openapi.yml",
+    "bitculator-markets-api-openapi.yml",
+    "bitculator-meta-api-openapi.yml",
+    "bitculator-prices-api-openapi.yml",
+    "bitculator-sentiment-api-openapi.yml",
+    "bitculator-wallets-api-openapi.yml",
+    "bitculator-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "bitculator-data-api-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "bitculator-alarms-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-calculators-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-coins-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-conversion-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-editorial-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-exchanges-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-global-market-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-indicators-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-liquidations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-markets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-meta-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-prices-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-sentiment-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-wallets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "bitculator-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

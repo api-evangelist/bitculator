@@ -1,0 +1,367 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Webhooks API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Webhooks
+  description: 'Bitculator POSTs each event as JSON with an HMAC signature header:
+
+
+    X-Bitculator-Signature: t=,v1=.", secret)>
+
+    X-Bitculator-Event: alarm.triggered
+
+
+    Verify it by recomputing the HMAC over "." with your
+
+    endpoint secret and comparing in constant time; reject if `t` is older than a
+
+    few minutes (replay guard).'
+paths:
+  /api/v1/webhooks:
+    get:
+      summary: List webhook endpoints
+      operationId: listWebhookEndpoints
+      description: 'The key owner''s webhook endpoints, newest first. Signing secrets are never
+
+        included — each secret is shown exactly once, at creation.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - id: 7
+                    url: https://example.com/webhooks/bitculator
+                    events:
+                    - alarm.triggered
+                    status: active
+                    consecutive_failures: 0
+                    disabled_at: null
+                    created_at: '2026-06-20T10:00:00+00:00'
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - id: 7
+                      url: https://example.com/webhooks/bitculator
+                      events:
+                      - alarm.triggered
+                      status: active
+                      consecutive_failures: 0
+                      disabled_at: null
+                      created_at: '2026-06-20T10:00:00+00:00'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 7
+                        url:
+                          type: string
+                          example: https://example.com/webhooks/bitculator
+                        events:
+                          type: array
+                          example:
+                          - alarm.triggered
+                          items:
+                            type: string
+                        status:
+                          type: string
+                          example: active
+                        consecutive_failures:
+                          type: integer
+                          example: 0
+                        disabled_at:
+                          type:
+                          - string
+                          - 'null'
+                          example: null
+                        created_at:
+                          type: string
+                          example: '2026-06-20T10:00:00+00:00'
+      tags:
+      - Webhooks
+    post:
+      summary: Create a webhook endpoint
+      operationId: createAWebhookEndpoint
+      description: 'Registers an HTTPS endpoint (max 5 per account) for event deliveries. The
+
+        response includes the signing `secret` — the ONLY time it is ever shown, so
+
+        store it immediately.'
+      parameters: []
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 8
+                    url: https://example.com/webhooks/bitculator
+                    events:
+                    - alarm.triggered
+                    status: active
+                    consecutive_failures: 0
+                    disabled_at: null
+                    created_at: '2026-07-03T08:00:00+00:00'
+                    secret: whsec_k5cQ1x9jJ2mW7pR4tY8uB3nV6zA0sD5f
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 8
+                      url:
+                        type: string
+                        example: https://example.com/webhooks/bitculator
+                      events:
+                        type: array
+                        example:
+                        - alarm.triggered
+                        items:
+                          type: string
+                      status:
+                        type: string
+                        example: active
+                      consecutive_failures:
+                        type: integer
+                        example: 0
+                      disabled_at:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      created_at:
+                        type: string
+                        example: '2026-07-03T08:00:00+00:00'
+                      secret:
+                        type: string
+                        example: whsec_k5cQ1x9jJ2mW7pR4tY8uB3nV6zA0sD5f
+      tags:
+      - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: The HTTPS delivery URL. Public hosts only — internal/private addresses are rejected.
+                  example: https://example.com/webhooks/bitculator
+                events:
+                  type: array
+                  description: 'Events to subscribe to. Allowed values: `alarm.triggered`.'
+                  example:
+                  - alarm.triggered
+                  items:
+                    type: string
+              required:
+              - url
+              - events
+  /api/v1/webhooks/{id}:
+    parameters:
+    - in: path
+      name: id
+      description: The webhook endpoint id.
+      example: 7
+      required: true
+      schema:
+        type: integer
+    delete:
+      summary: Delete a webhook endpoint
+      operationId: deleteAWebhookEndpoint
+      description: 'Deletes one of the key owner''s webhook endpoints. Pending deliveries to it are
+
+        abandoned.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    deleted: true
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      deleted:
+                        type: boolean
+                        example: true
+      tags:
+      - Webhooks
+  /api/v1/webhooks/{id}/test:
+    parameters:
+    - in: path
+      name: id
+      description: The webhook endpoint id.
+      example: 7
+      required: true
+      schema:
+        type: integer
+    post:
+      summary: Send a test event
+      operationId: sendATestEvent
+      description: 'Fires a signed `alarm.triggered` test event (`test: true` in the payload, real
+
+        signature headers) so receivers can be verified end-to-end.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    queued: true
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      queued:
+                        type: boolean
+                        example: true
+      tags:
+      - Webhooks
+  /api/v1/webhooks/{id}/deliveries:
+    parameters:
+    - in: path
+      name: id
+      description: The webhook endpoint id.
+      example: 7
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Webhook delivery log
+      operationId: webhookDeliveryLog
+      description: The endpoint's delivery attempts (kept 30 days), newest first, paginated.
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based).
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based).
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page (1–100, default 25).
+        example: 25
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page (1–100, default 25).
+          example: 25
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - id: 311
+                    event: alarm.triggered
+                    response_status: 200
+                    error: null
+                    attempts: 1
+                    delivered_at: '2026-07-02T21:14:09+00:00'
+                    created_at: '2026-07-02T21:14:08+00:00'
+                  meta:
+                    current_page: 1
+                    per_page: 25
+                    total: 6
+                    last_page: 1
+                    retention: 30 days
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - id: 311
+                      event: alarm.triggered
+                      response_status: 200
+                      error: null
+                      attempts: 1
+                      delivered_at: '2026-07-02T21:14:09+00:00'
+                      created_at: '2026-07-02T21:14:08+00:00'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 311
+                        event:
+                          type: string
+                          example: alarm.triggered
+                        response_status:
+                          type: integer
+                          example: 200
+                        error:
+                          type:
+                          - string
+                          - 'null'
+                          example: null
+                        attempts:
+                          type: integer
+                          example: 1
+                        delivered_at:
+                          type: string
+                          example: '2026-07-02T21:14:09+00:00'
+                        created_at:
+                          type: string
+                          example: '2026-07-02T21:14:08+00:00'
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      per_page:
+                        type: integer
+                        example: 25
+                      total:
+                        type: integer
+                        example: 6
+                      last_page:
+                        type: integer
+                        example: 1
+                      retention:
+                        type: string
+                        example: 30 days
+      tags:
+      - Webhooks
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

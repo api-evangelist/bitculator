@@ -1,0 +1,1575 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Indicators API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Indicators
+  description: Per-coin technical indicators.
+paths:
+  /api/v1/coins/{slug}/indicators:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Indicator snapshot
+      operationId: indicatorSnapshot
+      description: 'The multi-indicator snapshot — every indicator category''s latest `state`
+
+        (bullish/bearish/sheepish…), `score` and raw `data`, in one payload. Ideal
+
+        for a dashboard at-a-glance read; use the dedicated per-indicator endpoints
+
+        below for full daily history.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - indicator: OBV
+                    state: bearish
+                    score: -1
+                    data:
+                      value: 1755907904411
+                      window: 21
+                  - indicator: macd
+                    state: bullish
+                    score: 1
+                    data:
+                      value: -2811.87686067
+                      signal: -3364.35539147
+                      histogram: 552.4785308
+                  meta:
+                    coin: bitcoin
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - indicator: OBV
+                      state: bearish
+                      score: -1
+                      data:
+                        value: 1755907904411
+                        window: 21
+                    - indicator: macd
+                      state: bullish
+                      score: 1
+                      data:
+                        value: -2811.87686067
+                        signal: -3364.35539147
+                        histogram: 552.4785308
+                    items:
+                      type: object
+                      properties:
+                        indicator:
+                          type: string
+                          example: OBV
+                        state:
+                          type: string
+                          example: bearish
+                        score:
+                          type: integer
+                          example: -1
+                        data:
+                          type: object
+                          properties:
+                            value:
+                              type: integer
+                              example: 1755907904411
+                            window:
+                              type: integer
+                              example: 21
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: No indicator data for this coin yet.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: No indicator data for this coin yet.
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/rsi:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: RSI (Relative Strength Index)
+      operationId: rSIRelativeStrengthIndex
+      description: 'Daily Relative Strength Index — a momentum oscillator bounded 0–100 that
+
+        measures the speed and magnitude of recent price moves. Above 70 is
+
+        conventionally overbought, below 30 oversold. Windows: 7, 14, 21, 28 days
+
+        (default 14) — the 21- and 28-day windows require the Starter plan or higher.
+
+        Young coins return leading warm-up `null`s.'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 7, 14, 21, 28 (default 14).
+        example: 14
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 7, 14, 21, 28 (default 14).
+          example: 14
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: 42
+                  - date: '2026-06-15'
+                    value: 46
+                  meta:
+                    coin: bitcoin
+                    indicator: rsi
+                    period: 14
+                    count: 2
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: 42
+                    - date: '2026-06-15'
+                      value: 46
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: integer
+                          example: 42
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: rsi
+                      period:
+                        type: integer
+                        example: 14
+                      count:
+                        type: integer
+                        example: 2
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: plan_required
+                    message: The 28-day rsi window requires the Starter plan or higher.
+                    details:
+                      required_plan: starter
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: plan_required
+                      message:
+                        type: string
+                        example: The 28-day rsi window requires the Starter plan or higher.
+                      details:
+                        type: object
+                        properties:
+                          required_plan:
+                            type: string
+                            example: starter
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/stoch-rsi:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Stochastic RSI
+      operationId: stochasticRSI
+      description: 'Daily Stochastic RSI — applies the stochastic oscillator to RSI itself,
+
+        giving a faster, more sensitive 0–100 momentum read with `%K` and `%D` lines
+
+        that cross to signal turns. Windows: 7, 14, 21, 28 days (default 14) — the
+
+        21- and 28-day windows require the Starter plan or higher.'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 7, 14, 21, 28 (default 14).
+        example: 14
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 7, 14, 21, 28 (default 14).
+          example: 14
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    k: 18.4
+                    d: 22.1
+                  meta:
+                    coin: bitcoin
+                    indicator: stoch-rsi
+                    period: 14
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      k: 18.4
+                      d: 22.1
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        k:
+                          type: number
+                          example: 18.4
+                        d:
+                          type: number
+                          example: 22.1
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: stoch-rsi
+                      period:
+                        type: integer
+                        example: 14
+                      count:
+                        type: integer
+                        example: 1
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: plan_required
+                    message: The 28-day stoch-rsi window requires the Starter plan or higher.
+                    details:
+                      required_plan: starter
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: plan_required
+                      message:
+                        type: string
+                        example: The 28-day stoch-rsi window requires the Starter plan or higher.
+                      details:
+                        type: object
+                        properties:
+                          required_plan:
+                            type: string
+                            example: starter
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/sma:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: SMA (Simple Moving Average)
+      operationId: sMASimpleMovingAverage
+      description: 'Daily Simple Moving Average — the arithmetic mean of the closing price over
+
+        the window, the classic trend baseline traders read for support, resistance
+
+        and golden/death crosses. Windows: 50, 100, 200 days (default 50). Values are
+
+        decimal strings on the price scale.'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 50, 100, 200 (default 50).
+        example: 50
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 50, 100, 200 (default 50).
+          example: 50
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: '63120.44821000'
+                  meta:
+                    coin: bitcoin
+                    indicator: sma
+                    period: 50
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: '63120.44821000'
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: string
+                          example: '63120.44821000'
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: sma
+                      period:
+                        type: integer
+                        example: 50
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/cci:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: CCI (Commodity Channel Index)
+      operationId: cCICommodityChannelIndex
+      description: 'Daily Commodity Channel Index — measures how far price has deviated from its
+
+        statistical mean; readings beyond ±100 flag strong trends or potential
+
+        reversals. Windows: 20, 50, 100 days (default 20).'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 20, 50, 100 (default 20).
+        example: 20
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 20, 50, 100 (default 20).
+          example: 20
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: -83.5
+                  meta:
+                    coin: bitcoin
+                    indicator: cci
+                    period: 20
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: -83.5
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: number
+                          example: -83.5
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: cci
+                      period:
+                        type: integer
+                        example: 20
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/mfi:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: MFI (Money Flow Index)
+      operationId: mFIMoneyFlowIndex
+      description: 'Daily Money Flow Index — a volume-weighted RSI (0–100) that factors trading
+
+        volume into momentum, often called "volume RSI"; above 80 overbought, below
+
+        20 oversold. Windows: 7, 14, 28 days (default 14).'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 7, 14, 28 (default 14).
+        example: 14
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 7, 14, 28 (default 14).
+          example: 14
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: 57.2
+                  meta:
+                    coin: bitcoin
+                    indicator: mfi
+                    period: 14
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: 57.2
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: number
+                          example: 57.2
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: mfi
+                      period:
+                        type: integer
+                        example: 14
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/williams-r:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Williams %R
+      operationId: williamsR
+      description: 'Daily Williams %R — a momentum oscillator bounded −100–0 that maps where the
+
+        close sits within the recent high-low range; above −20 overbought, below −80
+
+        oversold. Windows: 14, 20, 50 days (default 14).'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 14, 20, 50 (default 14).
+        example: 14
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 14, 20, 50 (default 14).
+          example: 14
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: -72.4
+                  meta:
+                    coin: bitcoin
+                    indicator: williams-r
+                    period: 14
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: -72.4
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: number
+                          example: -72.4
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: williams-r
+                      period:
+                        type: integer
+                        example: 14
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/price-volatility:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Price volatility
+      operationId: priceVolatility
+      description: 'Daily price-volatility index — the dispersion of daily returns over the
+
+        window, a normalized read on how choppy price action has been. Windows: 7,
+
+        14, 30 days (default 7) — the 30-day window requires the Starter plan or
+
+        higher.'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 7, 14, 30 (default 7).
+        example: 7
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 7, 14, 30 (default 7).
+          example: 7
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: 3.18
+                  meta:
+                    coin: bitcoin
+                    indicator: price-volatility
+                    period: 7
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: 3.18
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: number
+                          example: 3.18
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: price-volatility
+                      period:
+                        type: integer
+                        example: 7
+                      count:
+                        type: integer
+                        example: 1
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: plan_required
+                    message: The 30-day price-volatility window requires the Starter plan or higher.
+                    details:
+                      required_plan: starter
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: plan_required
+                      message:
+                        type: string
+                        example: The 30-day price-volatility window requires the Starter plan or higher.
+                      details:
+                        type: object
+                        properties:
+                          required_plan:
+                            type: string
+                            example: starter
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/volume-volatility:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Volume volatility
+      operationId: volumeVolatility
+      description: 'Daily volume-volatility index — the dispersion of daily trading volume over
+
+        the window, a read on how erratic participation has been. Windows: 7, 14, 30
+
+        days (default 7) — the 30-day window requires the Starter plan or higher.'
+      parameters:
+      - in: query
+        name: period
+        description: Window length — one of 7, 14, 30 (default 7).
+        example: 7
+        required: false
+        schema:
+          type: integer
+          description: Window length — one of 7, 14, 30 (default 7).
+          example: 7
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: 12.6
+                  meta:
+                    coin: bitcoin
+                    indicator: volume-volatility
+                    period: 7
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: 12.6
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: number
+                          example: 12.6
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: volume-volatility
+                      period:
+                        type: integer
+                        example: 7
+                      count:
+                        type: integer
+                        example: 1
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: plan_required
+                    message: The 30-day volume-volatility window requires the Starter plan or higher.
+                    details:
+                      required_plan: starter
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: plan_required
+                      message:
+                        type: string
+                        example: The 30-day volume-volatility window requires the Starter plan or higher.
+                      details:
+                        type: object
+                        properties:
+                          required_plan:
+                            type: string
+                            example: starter
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/macd:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: MACD
+      operationId: mACD
+      description: 'Daily MACD (Moving Average Convergence Divergence) — the 12/26 EMA spread with
+
+        a 9-period signal line and histogram, a staple trend-and-momentum indicator
+
+        read for signal-line crossovers and zero-line shifts. Returns `macd`, `signal`
+
+        and `histogram` as decimal strings. No window parameter.'
+      parameters:
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    macd: '-2811.87686067'
+                    signal: '-3364.35539147'
+                    histogram: '552.47853080'
+                  meta:
+                    coin: bitcoin
+                    indicator: macd
+                    period: null
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      macd: '-2811.87686067'
+                      signal: '-3364.35539147'
+                      histogram: '552.47853080'
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        macd:
+                          type: string
+                          example: '-2811.87686067'
+                        signal:
+                          type: string
+                          example: '-3364.35539147'
+                        histogram:
+                          type: string
+                          example: '552.47853080'
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: macd
+                      period:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/obv:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: OBV (On-Balance Volume)
+      operationId: oBVOnBalanceVolume
+      description: 'Daily On-Balance Volume — a cumulative volume line that adds volume on up days
+
+        and subtracts it on down days, tracking net buying vs. selling pressure and
+
+        confirming (or diverging from) price trends. Single decimal-string series.'
+      parameters:
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: '1755907904411'
+                  meta:
+                    coin: bitcoin
+                    indicator: obv
+                    period: null
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: '1755907904411'
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: string
+                          example: '1755907904411'
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: obv
+                      period:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/adx:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: ADX (Average Directional Index)
+      operationId: aDXAverageDirectionalIndex
+      description: 'Daily ADX with +DI/−DI — measures trend *strength* (`adx`) and *direction*
+
+        (the `plus_di`/`minus_di` directional indicators). ADX above 25 signals a
+
+        strong trend regardless of direction; the DI crossover signals which way.
+
+        Single series, no window parameter.'
+      parameters:
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    adx: 27.3
+                    plus_di: 22.1
+                    minus_di: 15.8
+                  meta:
+                    coin: bitcoin
+                    indicator: adx
+                    period: null
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      adx: 27.3
+                      plus_di: 22.1
+                      minus_di: 15.8
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        adx:
+                          type: number
+                          example: 27.3
+                        plus_di:
+                          type: number
+                          example: 22.1
+                        minus_di:
+                          type: number
+                          example: 15.8
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: adx
+                      period:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/vwap:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: VWAP (Volume-Weighted Average Price)
+      operationId: vWAPVolumeWeightedAveragePrice
+      description: 'Daily VWAP — the average price weighted by volume, a core fair-value and
+
+        execution reference; price above VWAP reads bullish, below bearish. Single
+
+        decimal-string series, no window parameter.'
+      parameters:
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: '62880.10000000'
+                  meta:
+                    coin: bitcoin
+                    indicator: vwap
+                    period: null
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: '62880.10000000'
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: string
+                          example: '62880.10000000'
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: vwap
+                      period:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+  /api/v1/coins/{slug}/indicators/cmf:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: CMF (Chaikin Money Flow)
+      operationId: cMFChaikinMoneyFlow
+      description: 'Daily Chaikin Money Flow — sums money-flow volume over the period to gauge
+
+        accumulation vs. distribution; positive reads as net buying pressure, negative
+
+        as selling. Bounded around ±1. Single series, no window parameter.'
+      parameters:
+      - in: query
+        name: start
+        description: ISO date lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–1000, default 365).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–1000, default 365).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-06-14'
+                    value: 0.14
+                  meta:
+                    coin: bitcoin
+                    indicator: cmf
+                    period: null
+                    count: 1
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-06-14'
+                      value: 0.14
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-06-14'
+                        value:
+                          type: number
+                          example: 0.14
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      indicator:
+                        type: string
+                        example: cmf
+                      period:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      count:
+                        type: integer
+                        example: 1
+      tags:
+      - Indicators
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

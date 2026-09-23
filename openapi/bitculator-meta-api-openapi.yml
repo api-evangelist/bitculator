@@ -1,0 +1,186 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Meta API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Meta
+  description: 'API meta and introspection: an authenticated ping to verify a key and the
+
+    middleware stack, current-key usage/quota, and the machine-readable OpenAPI spec.'
+paths:
+  /api/v1/openapi.json:
+    get:
+      summary: OpenAPI spec
+      operationId: openAPISpec
+      description: 'The machine-readable OpenAPI 3 document for this API, as JSON — point codegen
+
+        or API tooling at this URL. Public: no key required.'
+      parameters: []
+      responses: []
+      tags:
+      - Meta
+  /api/v1/ping:
+    get:
+      summary: Ping
+      operationId: ping
+      description: 'An authenticated no-op for verifying a Data API key end-to-end (auth.api →
+
+        per-plan burst throttle → monthly quota). It counts against the quota like any
+
+        other call.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    status: ok
+                    plan: free
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: ok
+                      plan:
+                        type: string
+                        example: free
+      tags:
+      - Meta
+  /api/v1/usage:
+    get:
+      summary: Key usage & quota
+      operationId: keyUsageQuota
+      description: 'Usage introspection for the calling key''s owner: the Data API plan, its monthly
+
+        limit, used and remaining (always matching the X-Quota-* headers), the current
+
+        period window, and per-endpoint / per-token breakdowns. Embed-widget usage has
+
+        its own plan and pool — it never appears here.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    plan: free
+                    limit: 10000
+                    used: 29
+                    remaining: 9971
+                    period_start: '2026-06-15'
+                    period_end: '2026-07-15T00:00:00+00:00'
+                    burst_per_minute: 60
+                    endpoints:
+                    - endpoint: GET api/v1/prices
+                      requests: 18
+                    - endpoint: GET api/v1/global
+                      requests: 11
+                    tokens:
+                    - id: 12
+                      name: production
+                      kind: data-api
+                      requests: 29
+                      last_used_at: '2026-07-02T21:14:09+00:00'
+                      revoked: false
+                  meta:
+                    note: Endpoint and token breakdowns are flushed from the buffer every minute and can trail `used` slightly.
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      plan:
+                        type: string
+                        example: free
+                      limit:
+                        type: integer
+                        example: 10000
+                      used:
+                        type: integer
+                        example: 29
+                      remaining:
+                        type: integer
+                        example: 9971
+                      period_start:
+                        type: string
+                        example: '2026-06-15'
+                      period_end:
+                        type: string
+                        example: '2026-07-15T00:00:00+00:00'
+                      burst_per_minute:
+                        type: integer
+                        example: 60
+                      endpoints:
+                        type: array
+                        example:
+                        - endpoint: GET api/v1/prices
+                          requests: 18
+                        - endpoint: GET api/v1/global
+                          requests: 11
+                        items:
+                          type: object
+                          properties:
+                            endpoint:
+                              type: string
+                              example: GET api/v1/prices
+                            requests:
+                              type: integer
+                              example: 18
+                      tokens:
+                        type: array
+                        example:
+                        - id: 12
+                          name: production
+                          kind: data-api
+                          requests: 29
+                          last_used_at: '2026-07-02T21:14:09+00:00'
+                          revoked: false
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 12
+                            name:
+                              type: string
+                              example: production
+                            kind:
+                              type: string
+                              example: data-api
+                            requests:
+                              type: integer
+                              example: 29
+                            last_used_at:
+                              type: string
+                              example: '2026-07-02T21:14:09+00:00'
+                            revoked:
+                              type: boolean
+                              example: false
+                  meta:
+                    type: object
+                    properties:
+                      note:
+                        type: string
+                        example: Endpoint and token breakdowns are flushed from the buffer every minute and can trail `used` slightly.
+      tags:
+      - Meta
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

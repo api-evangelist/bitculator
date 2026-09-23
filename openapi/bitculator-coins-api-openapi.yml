@@ -1,0 +1,1756 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Coins API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Coins
+  description: 'Ranked coin and token market data: paginated listings, single-coin detail, movers
+
+    (gainers/losers), recently-added, trending, and per-coin time series. Prices,
+
+    marketcap and supply are decimal STRINGS (floats can''t carry market precision);
+
+    percentage changes, ranks and counts are numbers.'
+paths:
+  /api/v1/coins:
+    get:
+      summary: List coins
+      operationId: listCoins
+      description: 'Ranked coins with prices, filters and selectors, paginated with Laravel''s
+
+        `links` + `meta` envelope. Prices, marketcap and circulating_supply are decimal
+
+        strings; changes and ranks are numbers.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: type
+        description: 'Restrict to a single asset type: coin or token.'
+        example: coin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Restrict to a single asset type: coin or token.'
+          example: coin
+          enum:
+          - coin
+          - token
+      - in: query
+        name: status
+        description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+        example: active
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+          example: active
+          enum:
+          - active
+          - delisted
+          - untracked
+          - progressing
+          - awaiting
+          - preparing
+      - in: query
+        name: search
+        description: Free-text match on name or symbol. Must not be greater than 100 characters.
+        example: bitcoin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on name or symbol. Must not be greater than 100 characters.
+          example: bitcoin
+      - in: query
+        name: min_price
+        description: Only coins priced at or above this USD value. Must be at least 0.
+        example: 0.5
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or above this USD value. Must be at least 0.
+          example: 0.5
+      - in: query
+        name: max_price
+        description: Only coins priced at or below this USD value. Must be at least 0.
+        example: 100000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or below this USD value. Must be at least 0.
+          example: 100000
+      - in: query
+        name: min_marketcap
+        description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_marketcap
+        description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+        example: 5000000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+          example: 5000000000000
+      - in: query
+        name: min_volume
+        description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: ids
+        description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+        example: 38,39
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+          example: 38,39
+      - in: query
+        name: slugs
+        description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+        example: bitcoin,ethereum
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+          example: bitcoin,ethereum
+      - in: query
+        name: symbols
+        description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+        example: BTC,ETH
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+          example: BTC,ETH
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+        example: -marketcap
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+          example: -marketcap
+      - in: query
+        name: interval
+        description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+        example: 24h
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+          example: 24h
+          enum:
+          - 24h
+          - 7d
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - id: 38
+                    slug: bitcoin
+                    name: Bitcoin
+                    symbol: BTC
+                    rank: 1
+                    price: '63520.780763913'
+                    marketcap: 1264646594448.5
+                    volume_24h: 5345161962
+                    change_24h: 1.35
+                    change_7d: 4.98
+                    change_rank_24h: 0
+                    change_rank_7d: 0
+                    circulating_supply: '19909179'
+                    logo: https://bitculator.com/storage/media/logo/bitcoin.png
+                    listed_at: '2025-03-15T17:00:43+00:00'
+                    last_updated: '2026-06-27T10:34:17+00:00'
+                  links:
+                    first: https://bitculator.com/api/v1/coins?page=1
+                    last: https://bitculator.com/api/v1/coins?page=3
+                    prev: null
+                    next: https://bitculator.com/api/v1/coins?page=2
+                  meta:
+                    current_page: 1
+                    from: 1
+                    last_page: 3
+                    per_page: 50
+                    to: 50
+                    total: 134
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - id: 38
+                      slug: bitcoin
+                      name: Bitcoin
+                      symbol: BTC
+                      rank: 1
+                      price: '63520.780763913'
+                      marketcap: 1264646594448.5
+                      volume_24h: 5345161962
+                      change_24h: 1.35
+                      change_7d: 4.98
+                      change_rank_24h: 0
+                      change_rank_7d: 0
+                      circulating_supply: '19909179'
+                      logo: https://bitculator.com/storage/media/logo/bitcoin.png
+                      listed_at: '2025-03-15T17:00:43+00:00'
+                      last_updated: '2026-06-27T10:34:17+00:00'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 38
+                        slug:
+                          type: string
+                          example: bitcoin
+                        name:
+                          type: string
+                          example: Bitcoin
+                        symbol:
+                          type: string
+                          example: BTC
+                        rank:
+                          type: integer
+                          example: 1
+                        price:
+                          type: string
+                          example: '63520.780763913'
+                        marketcap:
+                          type: number
+                          example: 1264646594448.5
+                        volume_24h:
+                          type: integer
+                          example: 5345161962
+                        change_24h:
+                          type: number
+                          example: 1.35
+                        change_7d:
+                          type: number
+                          example: 4.98
+                        change_rank_24h:
+                          type: integer
+                          example: 0
+                        change_rank_7d:
+                          type: integer
+                          example: 0
+                        circulating_supply:
+                          type: string
+                          example: '19909179'
+                        logo:
+                          type: string
+                          example: https://bitculator.com/storage/media/logo/bitcoin.png
+                        listed_at:
+                          type: string
+                          example: '2025-03-15T17:00:43+00:00'
+                        last_updated:
+                          type: string
+                          example: '2026-06-27T10:34:17+00:00'
+                  links:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                        example: https://bitculator.com/api/v1/coins?page=1
+                      last:
+                        type: string
+                        example: https://bitculator.com/api/v1/coins?page=3
+                      prev:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      next:
+                        type: string
+                        example: https://bitculator.com/api/v1/coins?page=2
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      from:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 3
+                      per_page:
+                        type: integer
+                        example: 50
+                      to:
+                        type: integer
+                        example: 50
+                      total:
+                        type: integer
+                        example: 134
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: validation
+                    message: The request parameters are invalid.
+                    details:
+                      errors:
+                        per_page:
+                        - The per page must not be greater than 250.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: validation
+                      message:
+                        type: string
+                        example: The request parameters are invalid.
+                      details:
+                        type: object
+                        properties:
+                          errors:
+                            type: object
+                            properties:
+                              per_page:
+                                type: array
+                                example:
+                                - The per page must not be greater than 250.
+                                items:
+                                  type: string
+      tags:
+      - Coins
+  /api/v1/coins/recently-added:
+    get:
+      summary: Recently added coins
+      operationId: recentlyAddedCoins
+      description: 'Newest listings — sorted by status_updated_at (the went-active timestamp;
+
+        created_at is the crawl date, which predates listing by arbitrary amounts).
+
+        Same row shape and pagination envelope as `List coins`.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: type
+        description: 'Restrict to a single asset type: coin or token.'
+        example: coin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Restrict to a single asset type: coin or token.'
+          example: coin
+          enum:
+          - coin
+          - token
+      - in: query
+        name: status
+        description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+        example: active
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+          example: active
+          enum:
+          - active
+          - delisted
+          - untracked
+          - progressing
+          - awaiting
+          - preparing
+      - in: query
+        name: search
+        description: Free-text match on name or symbol. Must not be greater than 100 characters.
+        example: bitcoin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on name or symbol. Must not be greater than 100 characters.
+          example: bitcoin
+      - in: query
+        name: min_price
+        description: Only coins priced at or above this USD value. Must be at least 0.
+        example: 0.5
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or above this USD value. Must be at least 0.
+          example: 0.5
+      - in: query
+        name: max_price
+        description: Only coins priced at or below this USD value. Must be at least 0.
+        example: 100000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or below this USD value. Must be at least 0.
+          example: 100000
+      - in: query
+        name: min_marketcap
+        description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_marketcap
+        description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+        example: 5000000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+          example: 5000000000000
+      - in: query
+        name: min_volume
+        description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: ids
+        description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+        example: 38,39
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+          example: 38,39
+      - in: query
+        name: slugs
+        description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+        example: bitcoin,ethereum
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+          example: bitcoin,ethereum
+      - in: query
+        name: symbols
+        description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+        example: BTC,ETH
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+          example: BTC,ETH
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+        example: -marketcap
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+          example: -marketcap
+      - in: query
+        name: interval
+        description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+        example: 24h
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+          example: 24h
+          enum:
+          - 24h
+          - 7d
+      responses: []
+      tags:
+      - Coins
+  /api/v1/coins/gainers:
+    get:
+      summary: Top gainers
+      operationId: topGainers
+      description: 'Biggest positive movers over the `interval` window (24h default, or 7d). Same row
+
+        shape and pagination envelope as `List coins`.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: type
+        description: 'Restrict to a single asset type: coin or token.'
+        example: coin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Restrict to a single asset type: coin or token.'
+          example: coin
+          enum:
+          - coin
+          - token
+      - in: query
+        name: status
+        description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+        example: active
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+          example: active
+          enum:
+          - active
+          - delisted
+          - untracked
+          - progressing
+          - awaiting
+          - preparing
+      - in: query
+        name: search
+        description: Free-text match on name or symbol. Must not be greater than 100 characters.
+        example: bitcoin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on name or symbol. Must not be greater than 100 characters.
+          example: bitcoin
+      - in: query
+        name: min_price
+        description: Only coins priced at or above this USD value. Must be at least 0.
+        example: 0.5
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or above this USD value. Must be at least 0.
+          example: 0.5
+      - in: query
+        name: max_price
+        description: Only coins priced at or below this USD value. Must be at least 0.
+        example: 100000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or below this USD value. Must be at least 0.
+          example: 100000
+      - in: query
+        name: min_marketcap
+        description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_marketcap
+        description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+        example: 5000000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+          example: 5000000000000
+      - in: query
+        name: min_volume
+        description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: ids
+        description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+        example: 38,39
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+          example: 38,39
+      - in: query
+        name: slugs
+        description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+        example: bitcoin,ethereum
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+          example: bitcoin,ethereum
+      - in: query
+        name: symbols
+        description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+        example: BTC,ETH
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+          example: BTC,ETH
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+        example: -marketcap
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+          example: -marketcap
+      - in: query
+        name: interval
+        description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+        example: 24h
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+          example: 24h
+          enum:
+          - 24h
+          - 7d
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - id: 38
+                    slug: bitcoin
+                    name: Bitcoin
+                    symbol: BTC
+                    rank: 1
+                    price: '63520.780763913'
+                    marketcap: 1264646594448.5
+                    volume_24h: 5345161962
+                    change_24h: 1.35
+                    change_7d: 4.98
+                    change_rank_24h: 0
+                    change_rank_7d: 0
+                    circulating_supply: '19909179'
+                    logo: https://bitculator.com/storage/media/logo/bitcoin.png
+                    listed_at: '2025-03-15T17:00:43+00:00'
+                    last_updated: '2026-06-27T10:34:17+00:00'
+                  links:
+                    first: https://bitculator.com/api/v1/coins/gainers?page=1
+                    last: https://bitculator.com/api/v1/coins/gainers?page=2
+                    prev: null
+                    next: https://bitculator.com/api/v1/coins/gainers?page=2
+                  meta:
+                    current_page: 1
+                    from: 1
+                    last_page: 2
+                    per_page: 50
+                    to: 50
+                    total: 89
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - id: 38
+                      slug: bitcoin
+                      name: Bitcoin
+                      symbol: BTC
+                      rank: 1
+                      price: '63520.780763913'
+                      marketcap: 1264646594448.5
+                      volume_24h: 5345161962
+                      change_24h: 1.35
+                      change_7d: 4.98
+                      change_rank_24h: 0
+                      change_rank_7d: 0
+                      circulating_supply: '19909179'
+                      logo: https://bitculator.com/storage/media/logo/bitcoin.png
+                      listed_at: '2025-03-15T17:00:43+00:00'
+                      last_updated: '2026-06-27T10:34:17+00:00'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 38
+                        slug:
+                          type: string
+                          example: bitcoin
+                        name:
+                          type: string
+                          example: Bitcoin
+                        symbol:
+                          type: string
+                          example: BTC
+                        rank:
+                          type: integer
+                          example: 1
+                        price:
+                          type: string
+                          example: '63520.780763913'
+                        marketcap:
+                          type: number
+                          example: 1264646594448.5
+                        volume_24h:
+                          type: integer
+                          example: 5345161962
+                        change_24h:
+                          type: number
+                          example: 1.35
+                        change_7d:
+                          type: number
+                          example: 4.98
+                        change_rank_24h:
+                          type: integer
+                          example: 0
+                        change_rank_7d:
+                          type: integer
+                          example: 0
+                        circulating_supply:
+                          type: string
+                          example: '19909179'
+                        logo:
+                          type: string
+                          example: https://bitculator.com/storage/media/logo/bitcoin.png
+                        listed_at:
+                          type: string
+                          example: '2025-03-15T17:00:43+00:00'
+                        last_updated:
+                          type: string
+                          example: '2026-06-27T10:34:17+00:00'
+                  links:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                        example: https://bitculator.com/api/v1/coins/gainers?page=1
+                      last:
+                        type: string
+                        example: https://bitculator.com/api/v1/coins/gainers?page=2
+                      prev:
+                        type:
+                        - string
+                        - 'null'
+                        example: null
+                      next:
+                        type: string
+                        example: https://bitculator.com/api/v1/coins/gainers?page=2
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      from:
+                        type: integer
+                        example: 1
+                      last_page:
+                        type: integer
+                        example: 2
+                      per_page:
+                        type: integer
+                        example: 50
+                      to:
+                        type: integer
+                        example: 50
+                      total:
+                        type: integer
+                        example: 89
+      tags:
+      - Coins
+  /api/v1/coins/losers:
+    get:
+      summary: Top losers
+      operationId: topLosers
+      description: 'Biggest negative movers over the `interval` window (24h default, or 7d). Same row
+
+        shape and pagination envelope as `List coins`.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: type
+        description: 'Restrict to a single asset type: coin or token.'
+        example: coin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Restrict to a single asset type: coin or token.'
+          example: coin
+          enum:
+          - coin
+          - token
+      - in: query
+        name: status
+        description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+        example: active
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Listing status: active, delisted, untracked, progressing, awaiting or preparing. Defaults to all public statuses.'
+          example: active
+          enum:
+          - active
+          - delisted
+          - untracked
+          - progressing
+          - awaiting
+          - preparing
+      - in: query
+        name: search
+        description: Free-text match on name or symbol. Must not be greater than 100 characters.
+        example: bitcoin
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Free-text match on name or symbol. Must not be greater than 100 characters.
+          example: bitcoin
+      - in: query
+        name: min_price
+        description: Only coins priced at or above this USD value. Must be at least 0.
+        example: 0.5
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or above this USD value. Must be at least 0.
+          example: 0.5
+      - in: query
+        name: max_price
+        description: Only coins priced at or below this USD value. Must be at least 0.
+        example: 100000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins priced at or below this USD value. Must be at least 0.
+          example: 100000
+      - in: query
+        name: min_marketcap
+        description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_marketcap
+        description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+        example: 5000000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with a USD marketcap at or below this value. Must be at least 0.
+          example: 5000000000000
+      - in: query
+        name: min_volume
+        description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+        example: 1000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or above this value. Must be at least 0.
+          example: 1000000
+      - in: query
+        name: max_volume
+        description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+        example: 100000000000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only coins with 24h USD volume at or below this value. Must be at least 0.
+          example: 100000000000
+      - in: query
+        name: ids
+        description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+        example: 38,39
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin ids (CSV, up to 100 selectors combined with slugs/symbols). Must not be greater than 1000 characters.
+          example: 38,39
+      - in: query
+        name: slugs
+        description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+        example: bitcoin,ethereum
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin slugs (CSV, up to 100 selectors combined). Must not be greater than 2000 characters.
+          example: bitcoin,ethereum
+      - in: query
+        name: symbols
+        description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+        example: BTC,ETH
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Filter to specific coin symbols (CSV, case-insensitive, up to 100 selectors combined). Must not be greater than 1000 characters.
+          example: BTC,ETH
+      - in: query
+        name: sort
+        description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+        example: -marketcap
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Comma-separated sort fields; prefix with - for descending. Sortable: marketcap, rank, price, volume_24h, change_24h, change_7d. Must not be greater than 100 characters.'
+          example: -marketcap
+      - in: query
+        name: interval
+        description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+        example: 24h
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Movers window for /coins/gainers and /coins/losers only: 24h or 7d.'
+          example: 24h
+          enum:
+          - 24h
+          - 7d
+      responses: []
+      tags:
+      - Coins
+  /api/v1/coins/trending:
+    get:
+      summary: Trending coins
+      operationId: trendingCoins
+      description: 'The most-viewed coins right now, ranked by view `score`. A compact projection
+
+        (no pagination): id, slug, name, symbol, rank, price (decimal string), marketcap,
+
+        logo and score.'
+      parameters:
+      - in: query
+        name: limit
+        description: How many trending coins to return (1–20, default 10).
+        example: 10
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: How many trending coins to return (1–20, default 10).
+          example: 10
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - id: 38
+                    slug: bitcoin
+                    name: Bitcoin
+                    symbol: BTC
+                    rank: 1
+                    price: '63520.780763913'
+                    marketcap: 1264646594448.5
+                    logo: https://bitculator.com/storage/media/logo/bitcoin.png
+                    score: 2
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - id: 38
+                      slug: bitcoin
+                      name: Bitcoin
+                      symbol: BTC
+                      rank: 1
+                      price: '63520.780763913'
+                      marketcap: 1264646594448.5
+                      logo: https://bitculator.com/storage/media/logo/bitcoin.png
+                      score: 2
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 38
+                        slug:
+                          type: string
+                          example: bitcoin
+                        name:
+                          type: string
+                          example: Bitcoin
+                        symbol:
+                          type: string
+                          example: BTC
+                        rank:
+                          type: integer
+                          example: 1
+                        price:
+                          type: string
+                          example: '63520.780763913'
+                        marketcap:
+                          type: number
+                          example: 1264646594448.5
+                        logo:
+                          type: string
+                          example: https://bitculator.com/storage/media/logo/bitcoin.png
+                        score:
+                          type: integer
+                          example: 2
+      tags:
+      - Coins
+  /api/v1/coins/{slug}:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get coin detail
+      operationId: getCoinDetail
+      description: 'Full single-coin profile. Beyond the list fields it adds: `supply`
+
+        (circulating/total/max), `today` OHLC, `all_time_high` / `all_time_low` (price,
+
+        date and percent_from the current price), `fully_diluted_valuation`, market
+
+        `counts` (exchanges/pairs/tickers/wallets), `decimals`, `genesis_date`, official
+
+        `links` (typed url list), token `contracts`, and a localized HTML `description`
+
+        (falls back to English when the requested locale is missing). All price/supply
+
+        fields are decimal strings.'
+      parameters:
+      - in: query
+        name: locale
+        description: Content language for the description (falls back to English).
+        example: en
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Content language for the description (falls back to English).
+          example: en
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 38
+                    slug: bitcoin
+                    name: Bitcoin
+                    symbol: BTC
+                    type: coin
+                    rank: 1
+                    price: '63520.780763913'
+                    marketcap: 1264646594448.5
+                    fully_diluted_valuation: 1333936396042.2
+                    volume_24h: 5345161962
+                    change_24h: 1.35
+                    change_7d: 4.98
+                    change_rank_24h: 0
+                    change_rank_7d: 0
+                    supply:
+                      circulating: '19909179'
+                      total: '19970852'
+                      max: '21000000'
+                    today:
+                      open: '63408.100996475'
+                      high: '63640.608639825'
+                      low: '62798.732107749'
+                      close: '63520.780763913'
+                    all_time_high:
+                      price: '125881.21309073'
+                      date: '2025-10-06'
+                      percent_from: -49.54
+                    all_time_low:
+                      price: '0.099'
+                      date: '2010-10-12'
+                      percent_from: 64162304.81
+                    counts:
+                      exchanges: 11
+                      pairs: 92
+                      tickers: 211
+                      wallets: 206
+                    decimals: 8
+                    genesis_date: '2009-01-03'
+                    description: <p>Bitcoin is a decentralized digital currency…</p>
+                    links:
+                    - type: website
+                      url: https://bitcoin.org/en/
+                    - type: whitepaper
+                      url: https://bitcoin.org/bitcoin.pdf
+                    contracts: []
+                    logo: https://bitculator.com/storage/media/logo/bitcoin.png
+                    last_updated: '2026-06-27T10:34:17+00:00'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 38
+                      slug:
+                        type: string
+                        example: bitcoin
+                      name:
+                        type: string
+                        example: Bitcoin
+                      symbol:
+                        type: string
+                        example: BTC
+                      type:
+                        type: string
+                        example: coin
+                      rank:
+                        type: integer
+                        example: 1
+                      price:
+                        type: string
+                        example: '63520.780763913'
+                      marketcap:
+                        type: number
+                        example: 1264646594448.5
+                      fully_diluted_valuation:
+                        type: number
+                        example: 1333936396042.2
+                      volume_24h:
+                        type: integer
+                        example: 5345161962
+                      change_24h:
+                        type: number
+                        example: 1.35
+                      change_7d:
+                        type: number
+                        example: 4.98
+                      change_rank_24h:
+                        type: integer
+                        example: 0
+                      change_rank_7d:
+                        type: integer
+                        example: 0
+                      supply:
+                        type: object
+                        properties:
+                          circulating:
+                            type: string
+                            example: '19909179'
+                          total:
+                            type: string
+                            example: '19970852'
+                          max:
+                            type: string
+                            example: '21000000'
+                      today:
+                        type: object
+                        properties:
+                          open:
+                            type: string
+                            example: '63408.100996475'
+                          high:
+                            type: string
+                            example: '63640.608639825'
+                          low:
+                            type: string
+                            example: '62798.732107749'
+                          close:
+                            type: string
+                            example: '63520.780763913'
+                      all_time_high:
+                        type: object
+                        properties:
+                          price:
+                            type: string
+                            example: '125881.21309073'
+                          date:
+                            type: string
+                            example: '2025-10-06'
+                          percent_from:
+                            type: number
+                            example: -49.54
+                      all_time_low:
+                        type: object
+                        properties:
+                          price:
+                            type: string
+                            example: '0.099'
+                          date:
+                            type: string
+                            example: '2010-10-12'
+                          percent_from:
+                            type: number
+                            example: 64162304.81
+                      counts:
+                        type: object
+                        properties:
+                          exchanges:
+                            type: integer
+                            example: 11
+                          pairs:
+                            type: integer
+                            example: 92
+                          tickers:
+                            type: integer
+                            example: 211
+                          wallets:
+                            type: integer
+                            example: 206
+                      decimals:
+                        type: integer
+                        example: 8
+                      genesis_date:
+                        type: string
+                        example: '2009-01-03'
+                      description:
+                        type: string
+                        example: <p>Bitcoin is a decentralized digital currency…</p>
+                      links:
+                        type: array
+                        example:
+                        - type: website
+                          url: https://bitcoin.org/en/
+                        - type: whitepaper
+                          url: https://bitcoin.org/bitcoin.pdf
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: website
+                            url:
+                              type: string
+                              example: https://bitcoin.org/en/
+                      contracts:
+                        type: array
+                        example: []
+                      logo:
+                        type: string
+                        example: https://bitculator.com/storage/media/logo/bitcoin.png
+                      last_updated:
+                        type: string
+                        example: '2026-06-27T10:34:17+00:00'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: Coin not found.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: Coin not found.
+      tags:
+      - Coins
+  /api/v1/coins/{slug}/history:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Candle history
+      operationId: candleHistory
+      description: 'Per-coin OHLC + volume + marketcap time series. Pick `interval`: minutely,
+
+        half-hourly, hourly or daily. Retention is a hard property of the rollup
+
+        pipeline — minutely 8 days, half-hourly 3 months, hourly 6 months, daily forever;
+
+        requests beyond a window return what exists. When a `limit` is set you get the
+
+        MOST RECENT N rows in the window, emitted oldest-first. Prices are decimal
+
+        strings.'
+      parameters:
+      - in: query
+        name: interval
+        description: minutely, half-hourly, hourly or daily (default daily).
+        example: daily
+        required: false
+        schema:
+          type: string
+          description: minutely, half-hourly, hourly or daily (default daily).
+          example: daily
+      - in: query
+        name: start
+        description: ISO date/time lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date/time lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date/time upper bound (a date-only value means through that day).
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date/time upper bound (a date-only value means through that day).
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–2000, default 1000).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–2000, default 1000).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - time: '2026-06-14T23:01:01+00:00'
+                    price: '65481.259006434'
+                    open: '64193.294621057'
+                    high: '65513.599862059'
+                    low: '63528.138075558'
+                    close: '65481.259006434'
+                    volume_24h: 3795657715
+                    marketcap: 1303678106704.5
+                  meta:
+                    coin: bitcoin
+                    interval: daily
+                    count: 1
+                    retention: full history
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - time: '2026-06-14T23:01:01+00:00'
+                      price: '65481.259006434'
+                      open: '64193.294621057'
+                      high: '65513.599862059'
+                      low: '63528.138075558'
+                      close: '65481.259006434'
+                      volume_24h: 3795657715
+                      marketcap: 1303678106704.5
+                    items:
+                      type: object
+                      properties:
+                        time:
+                          type: string
+                          example: '2026-06-14T23:01:01+00:00'
+                        price:
+                          type: string
+                          example: '65481.259006434'
+                        open:
+                          type: string
+                          example: '64193.294621057'
+                        high:
+                          type: string
+                          example: '65513.599862059'
+                        low:
+                          type: string
+                          example: '63528.138075558'
+                        close:
+                          type: string
+                          example: '65481.259006434'
+                        volume_24h:
+                          type: integer
+                          example: 3795657715
+                        marketcap:
+                          type: number
+                          example: 1303678106704.5
+                  meta:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      interval:
+                        type: string
+                        example: daily
+                      count:
+                        type: integer
+                        example: 1
+                      retention:
+                        type: string
+                        example: full history
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: Coin not found.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: Coin not found.
+      tags:
+      - Coins
+  /api/v1/coins/{slug}/marketcap-history:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Marketcap history
+      operationId: marketcapHistory
+      description: 'The same per-coin rollups as `Candle history`, projected to `{time, marketcap}`
+
+        only. Same `interval` choices and retention windows (minutely 8 days,
+
+        half-hourly 3 months, hourly 6 months, daily forever), most-recent-N when a
+
+        `limit` is set.'
+      parameters:
+      - in: query
+        name: interval
+        description: minutely, half-hourly, hourly or daily (default daily).
+        example: daily
+        required: false
+        schema:
+          type: string
+          description: minutely, half-hourly, hourly or daily (default daily).
+          example: daily
+      - in: query
+        name: start
+        description: ISO date/time lower bound.
+        example: '2026-06-01'
+        required: false
+        schema:
+          type: string
+          description: ISO date/time lower bound.
+          example: '2026-06-01'
+      - in: query
+        name: end
+        description: ISO date/time upper bound.
+        example: '2026-06-30'
+        required: false
+        schema:
+          type: string
+          description: ISO date/time upper bound.
+          example: '2026-06-30'
+      - in: query
+        name: limit
+        description: Max rows (1–2000, default 1000).
+        example: 30
+        required: false
+        schema:
+          type: integer
+          description: Max rows (1–2000, default 1000).
+          example: 30
+      responses: []
+      tags:
+      - Coins
+  /api/v1/coins/{slug}/sparkline:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin slug.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Coin sparkline
+      operationId: coinSparkline
+      description: 'A compact price series for the coin over the chosen `period`, for drawing
+
+        sparklines.
+
+
+        `points` is a sample of at most 480 readings, oldest first, each a decimal-string
+
+        `price` at an ISO-8601 `time`. `low` and `high` are the true extremes of the whole
+
+        period — they bound every point, but need not appear among the sampled ones.
+
+        `change` is the move across the period in PERCENT (`1.25` means +1.25%).'
+      parameters:
+      - in: query
+        name: period
+        description: 24h, 7d, 30d, 60d, 90d, 180d or 365d (default 7d).
+        example: 7d
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 24h, 7d, 30d, 60d, 90d, 180d or 365d (default 7d).
+          example: 7d
+      responses: []
+      tags:
+      - Coins
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

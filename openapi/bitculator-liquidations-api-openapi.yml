@@ -1,0 +1,641 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Liquidations API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Liquidations
+  description: 'Derivatives liquidations. Source coverage is currently OKX swap markets only
+
+    (stated in every `meta.note`). The RAW feed (the `/liquidations` list and the
+
+    hourly breakdown) is pruned after ~48 hours; daily rollups are kept forever.
+
+    Today''s aggregates are partial and update every ~15 minutes.'
+paths:
+  /api/v1/liquidations:
+    get:
+      summary: Liquidation feed
+      operationId: liquidationFeed
+      description: 'The raw liquidation feed (~last 48h, then pruned), newest first. Source coverage
+
+        is currently OKX swap markets. Prices are decimal strings. `meta` carries the
+
+        pagination fields plus a `retention` and `note`.'
+      parameters:
+      - in: query
+        name: page
+        description: Page number (1-based). Must be at least 1.
+        example: 1
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Page number (1-based). Must be at least 1.
+          example: 1
+      - in: query
+        name: per_page
+        description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+        example: 50
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Rows per page. The cap is plan-based (Free 100, Starter/Pro 250); exceeding it returns 422 rather than clamping. Must be at least 1. Must not be greater than 100.
+          example: 50
+      - in: query
+        name: exchange
+        description: Restrict to a single exchange by slug. Source coverage is currently OKX swap markets. Must match the regex /^[a-z0-9\-]{1,120}$/.
+        example: okx
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Restrict to a single exchange by slug. Source coverage is currently OKX swap markets. Must match the regex /^[a-z0-9\-]{1,120}$/.
+          example: okx
+      - in: query
+        name: instrument
+        description: 'Instrument type: future, option, swap, spot or margin.'
+        example: swap
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Instrument type: future, option, swap, spot or margin.'
+          example: swap
+          enum:
+          - future
+          - option
+          - swap
+          - spot
+          - margin
+      - in: query
+        name: position
+        description: 'Liquidated position side: long or short.'
+        example: short
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Liquidated position side: long or short.'
+          example: short
+          enum:
+          - long
+          - short
+      - in: query
+        name: order
+        description: 'Fill side that triggered the liquidation: buy or sell.'
+        example: buy
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: 'Fill side that triggered the liquidation: buy or sell.'
+          example: buy
+          enum:
+          - buy
+          - sell
+      - in: query
+        name: symbol
+        description: Prefix match on the venue instId (e.g. BTC matches BTC-USDT-SWAP). Must match the regex /^[A-Za-z0-9$\.\-]{1,25}$/.
+        example: BTC
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          description: Prefix match on the venue instId (e.g. BTC matches BTC-USDT-SWAP). Must match the regex /^[A-Za-z0-9$\.\-]{1,25}$/.
+          example: BTC
+      - in: query
+        name: min_usd
+        description: Only liquidations with a USD value at or above this threshold. Must be at least 0.
+        example: 1000
+        required: false
+        schema:
+          type:
+          - number
+          - 'null'
+          description: Only liquidations with a USD value at or above this threshold. Must be at least 0.
+          example: 1000
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - symbol: NEAR-USDT-SWAP
+                    exchange:
+                      id: 20
+                      slug: okx
+                      name: OKX
+                    instrument: swap
+                    position: short
+                    order: buy
+                    price: '2.245'
+                    value_usd: 5727.73
+                    quantity: 259.1
+                    liquidated_at: '2026-06-21T07:39:41+00:00'
+                  meta:
+                    current_page: 1
+                    per_page: 50
+                    total: 4681
+                    last_page: 94
+                    retention: ~48 hours (raw feed is pruned)
+                    note: 'Source coverage: OKX swap markets.'
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - symbol: NEAR-USDT-SWAP
+                      exchange:
+                        id: 20
+                        slug: okx
+                        name: OKX
+                      instrument: swap
+                      position: short
+                      order: buy
+                      price: '2.245'
+                      value_usd: 5727.73
+                      quantity: 259.1
+                      liquidated_at: '2026-06-21T07:39:41+00:00'
+                    items:
+                      type: object
+                      properties:
+                        symbol:
+                          type: string
+                          example: NEAR-USDT-SWAP
+                        exchange:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 20
+                            slug:
+                              type: string
+                              example: okx
+                            name:
+                              type: string
+                              example: OKX
+                        instrument:
+                          type: string
+                          example: swap
+                        position:
+                          type: string
+                          example: short
+                        order:
+                          type: string
+                          example: buy
+                        price:
+                          type: string
+                          example: '2.245'
+                        value_usd:
+                          type: number
+                          example: 5727.73
+                        quantity:
+                          type: number
+                          example: 259.1
+                        liquidated_at:
+                          type: string
+                          example: '2026-06-21T07:39:41+00:00'
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      per_page:
+                        type: integer
+                        example: 50
+                      total:
+                        type: integer
+                        example: 4681
+                      last_page:
+                        type: integer
+                        example: 94
+                      retention:
+                        type: string
+                        example: ~48 hours (raw feed is pruned)
+                      note:
+                        type: string
+                        example: 'Source coverage: OKX swap markets.'
+      tags:
+      - Liquidations
+  /api/v1/liquidations/hourly:
+    get:
+      summary: Hourly liquidations
+      operationId: hourlyLiquidations
+      description: 'Hourly long/short USD totals over the raw feed. Because the raw feed is pruned at
+
+        ~48h, `hours` is capped at 48. Source coverage is currently OKX swap markets.'
+      parameters:
+      - in: query
+        name: hours
+        description: Look-back window in hours (1–48, default 24).
+        example: 24
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Look-back window in hours (1–48, default 24).
+          example: 24
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - hour: '2026-07-03T08:00:00+00:00'
+                    liquidations: 112
+                    total_usd: 1834567.21
+                    long_usd: 1034567.11
+                    short_usd: 800000.1
+                  meta:
+                    hours: 24
+                    note: 'Source coverage: OKX swap markets.'
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - hour: '2026-07-03T08:00:00+00:00'
+                      liquidations: 112
+                      total_usd: 1834567.21
+                      long_usd: 1034567.11
+                      short_usd: 800000.1
+                    items:
+                      type: object
+                      properties:
+                        hour:
+                          type: string
+                          example: '2026-07-03T08:00:00+00:00'
+                        liquidations:
+                          type: integer
+                          example: 112
+                        total_usd:
+                          type: number
+                          example: 1834567.21
+                        long_usd:
+                          type: number
+                          example: 1034567.11
+                        short_usd:
+                          type: number
+                          example: 800000.1
+                  meta:
+                    type: object
+                    properties:
+                      hours:
+                        type: integer
+                        example: 24
+                      note:
+                        type: string
+                        example: 'Source coverage: OKX swap markets.'
+      tags:
+      - Liquidations
+  /api/v1/liquidations/daily:
+    get:
+      summary: Daily liquidations
+      operationId: dailyLiquidations
+      description: 'Daily aggregates (kept forever), summed across exchanges/instruments per day —
+
+        total/long/short USD plus long/short position counts. Today''s row is partial and
+
+        updates every ~15 minutes. Source coverage is currently OKX swap markets.'
+      parameters:
+      - in: query
+        name: days
+        description: Number of calendar days incl. today (1–365, default 30).
+        example: 30
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Number of calendar days incl. today (1–365, default 30).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-07-02'
+                    total_usd: 27888888.76
+                    long_usd: 18345672.1
+                    short_usd: 9543216.66
+                    longs: 4231
+                    shorts: 2614
+                  meta:
+                    days: 30
+                    note: 'Source coverage: OKX swap markets.'
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-07-02'
+                      total_usd: 27888888.76
+                      long_usd: 18345672.1
+                      short_usd: 9543216.66
+                      longs: 4231
+                      shorts: 2614
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-07-02'
+                        total_usd:
+                          type: number
+                          example: 27888888.76
+                        long_usd:
+                          type: number
+                          example: 18345672.1
+                        short_usd:
+                          type: number
+                          example: 9543216.66
+                        longs:
+                          type: integer
+                          example: 4231
+                        shorts:
+                          type: integer
+                          example: 2614
+                  meta:
+                    type: object
+                    properties:
+                      days:
+                        type: integer
+                        example: 30
+                      note:
+                        type: string
+                        example: 'Source coverage: OKX swap markets.'
+      tags:
+      - Liquidations
+  /api/v1/liquidations/summary:
+    get:
+      summary: Today's liquidation summary
+      operationId: todaysLiquidationSummary
+      description: 'Today so far — total/long/short USD, position counts and long-vs-short
+
+        `dominance`. Figures are partial and update every ~15 minutes; `data` is null
+
+        until the first liquidation of the day is recorded. Source coverage is currently
+
+        OKX swap markets.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    date: '2026-07-03'
+                    total_usd: 12345678.9
+                    long_usd: 8345678.9
+                    short_usd: 4000000
+                    longs: 1834
+                    shorts: 961
+                    dominance:
+                      long: 67.6
+                      short: 32.4
+                  meta:
+                    note: 'Source coverage: OKX swap markets. Today''s figures are partial and update every ~15 minutes.'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                        example: '2026-07-03'
+                      total_usd:
+                        type: number
+                        example: 12345678.9
+                      long_usd:
+                        type: number
+                        example: 8345678.9
+                      short_usd:
+                        type: integer
+                        example: 4000000
+                      longs:
+                        type: integer
+                        example: 1834
+                      shorts:
+                        type: integer
+                        example: 961
+                      dominance:
+                        type: object
+                        properties:
+                          long:
+                            type: number
+                            example: 67.6
+                          short:
+                            type: number
+                            example: 32.4
+                  meta:
+                    type: object
+                    properties:
+                      note:
+                        type: string
+                        example: 'Source coverage: OKX swap markets. Today''s figures are partial and update every ~15 minutes.'
+      tags:
+      - Liquidations
+  /api/v1/liquidations/netflow:
+    get:
+      summary: Liquidation netflow
+      operationId: liquidationNetflow
+      description: 'Long-vs-short liquidation USD flow per day over the window. Source coverage is
+
+        currently OKX swap markets.'
+      parameters:
+      - in: query
+        name: days
+        description: Number of calendar days incl. today (1–90, default 30).
+        example: 30
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Number of calendar days incl. today (1–90, default 30).
+          example: 30
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - date: '2026-07-02'
+                    long: 1834567.21
+                    short: 954321.55
+                    total: 2788888.76
+                    longs: 420
+                    shorts: 261
+                  meta:
+                    days: 30
+                    note: 'Source coverage: OKX swap markets.'
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - date: '2026-07-02'
+                      long: 1834567.21
+                      short: 954321.55
+                      total: 2788888.76
+                      longs: 420
+                      shorts: 261
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: '2026-07-02'
+                        long:
+                          type: number
+                          example: 1834567.21
+                        short:
+                          type: number
+                          example: 954321.55
+                        total:
+                          type: number
+                          example: 2788888.76
+                        longs:
+                          type: integer
+                          example: 420
+                        shorts:
+                          type: integer
+                          example: 261
+                  meta:
+                    type: object
+                    properties:
+                      days:
+                        type: integer
+                        example: 30
+                      note:
+                        type: string
+                        example: 'Source coverage: OKX swap markets.'
+      tags:
+      - Liquidations
+  /api/v1/liquidations/coins:
+    get:
+      summary: Top liquidated coins
+      operationId: topLiquidatedCoins
+      description: 'Top coins by liquidation volume over the recent window, with the long/short USD
+
+        split per coin. Source coverage is currently OKX swap markets.'
+      parameters:
+      - in: query
+        name: hours
+        description: Look-back window in hours (1–48, default 24).
+        example: 24
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Look-back window in hours (1–48, default 24).
+          example: 24
+      - in: query
+        name: limit
+        description: Number of coins to return (1–20, default 8).
+        example: 8
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Number of coins to return (1–20, default 8).
+          example: 8
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                  - symbol: BTC
+                    name: Bitcoin
+                    slug: bitcoin
+                    logo: https://bitculator.com/storage/media/assets/bitcoin-small.png
+                    long: 734567.21
+                    short: 954321.55
+                    total: 1688888.76
+                  meta:
+                    hours: 24
+                    note: 'Source coverage: OKX swap markets.'
+                properties:
+                  data:
+                    type: array
+                    example:
+                    - symbol: BTC
+                      name: Bitcoin
+                      slug: bitcoin
+                      logo: https://bitculator.com/storage/media/assets/bitcoin-small.png
+                      long: 734567.21
+                      short: 954321.55
+                      total: 1688888.76
+                    items:
+                      type: object
+                      properties:
+                        symbol:
+                          type: string
+                          example: BTC
+                        name:
+                          type: string
+                          example: Bitcoin
+                        slug:
+                          type: string
+                          example: bitcoin
+                        logo:
+                          type: string
+                          example: https://bitculator.com/storage/media/assets/bitcoin-small.png
+                        long:
+                          type: number
+                          example: 734567.21
+                        short:
+                          type: number
+                          example: 954321.55
+                        total:
+                          type: number
+                          example: 1688888.76
+                  meta:
+                    type: object
+                    properties:
+                      hours:
+                        type: integer
+                        example: 24
+                      note:
+                        type: string
+                        example: 'Source coverage: OKX swap markets.'
+      tags:
+      - Liquidations
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.

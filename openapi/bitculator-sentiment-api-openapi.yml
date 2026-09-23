@@ -1,0 +1,322 @@
+openapi: 3.2.0
+info:
+  title: Bitculator Data Sentiment API
+  description: 'Programmatic access to Bitculator market data: coins, prices, history, exchanges, trust scores, tickers, pairs, wallets, sentiment, technical indicators, liquidations, editorial content, and calculators.'
+  version: 1.0.0
+servers:
+- url: https://bitculator.com
+security:
+- default: []
+tags:
+- name: Sentiment
+  description: 'Market and per-coin sentiment indices. Fear & Greed and Bull/Bear are
+
+    15-minute-refresh SNAPSHOTS — only the current reading exists, there is no time
+
+    series for them. Altseason carries full daily history. `indicators` is the
+
+    market-wide technical tally.'
+paths:
+  /api/v1/coins/{slug}/votes:
+    parameters:
+    - in: path
+      name: slug
+      description: The coin's slug identifier.
+      example: bitcoin
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Community vote tallies
+      operationId: communityVoteTallies
+      description: The coin's bullish/bearish community tallies over the rolling 24h window.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    coin: bitcoin
+                    bullish: 184
+                    bearish: 42
+                    total: 226
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      bullish:
+                        type: integer
+                        example: 184
+                      bearish:
+                        type: integer
+                        example: 42
+                      total:
+                        type: integer
+                        example: 226
+      tags:
+      - Sentiment
+    post:
+      summary: Cast a sentiment vote
+      operationId: castASentimentVote
+      description: 'Casts the key owner''s sentiment vote for a coin. One vote per key owner per coin
+
+        per rolling 24h window — re-voting inside the window updates the existing vote.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    coin: bitcoin
+                    bullish: 185
+                    bearish: 42
+                    total: 227
+                    your_vote: bullish
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      coin:
+                        type: string
+                        example: bitcoin
+                      bullish:
+                        type: integer
+                        example: 185
+                      bearish:
+                        type: integer
+                        example: 42
+                      total:
+                        type: integer
+                        example: 227
+                      your_vote:
+                        type: string
+                        example: bullish
+      tags:
+      - Sentiment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vote:
+                  type: string
+                  description: 'Your sentiment: `bullish` or `bearish`.'
+                  example: bullish
+              required:
+              - vote
+  /api/v1/sentiment/fear-greed:
+    get:
+      summary: Fear & Greed index
+      operationId: fearGreedIndex
+      description: 'The current Fear & Greed reading (a 15-minute snapshot — no history). Omit `coin`
+
+        for the market-wide index, or pass a coin slug for a per-coin reading. `intervals`
+
+        carries the 7d/30d sub-scores and their component breakdown.'
+      parameters:
+      - in: query
+        name: coin
+        description: Coin slug for a per-coin reading; omit for the market index.
+        example: bitcoin
+        required: false
+        schema:
+          type: string
+          description: Coin slug for a per-coin reading; omit for the market index.
+          example: bitcoin
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    scope: market
+                    score: 15
+                    regime: neutral
+                    intervals:
+                      7d:
+                        score: 15
+                        regime: neutral
+                        breakdown:
+                          volume: 40
+                          breadth: 1
+                          momentum: -8
+                          volatility: 36
+                        score_normalized: 15
+                      30d:
+                        score: 18
+                        regime: neutral
+                        breakdown:
+                          volume: 80
+                          breadth: 1
+                          momentum: -10
+                          volatility: 18
+                        score_normalized: 18
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      scope:
+                        type: string
+                        example: market
+                      score:
+                        type: integer
+                        example: 15
+                      regime:
+                        type: string
+                        example: neutral
+                      intervals:
+                        type: object
+                        properties:
+                          7d:
+                            type: object
+                            properties:
+                              score:
+                                type: integer
+                                example: 15
+                              regime:
+                                type: string
+                                example: neutral
+                              breakdown:
+                                type: object
+                                properties:
+                                  volume:
+                                    type: integer
+                                    example: 40
+                                  breadth:
+                                    type: integer
+                                    example: 1
+                                  momentum:
+                                    type: integer
+                                    example: -8
+                                  volatility:
+                                    type: integer
+                                    example: 36
+                              score_normalized:
+                                type: integer
+                                example: 15
+                          30d:
+                            type: object
+                            properties:
+                              score:
+                                type: integer
+                                example: 18
+                              regime:
+                                type: string
+                                example: neutral
+                              breakdown:
+                                type: object
+                                properties:
+                                  volume:
+                                    type: integer
+                                    example: 80
+                                  breadth:
+                                    type: integer
+                                    example: 1
+                                  momentum:
+                                    type: integer
+                                    example: -10
+                                  volatility:
+                                    type: integer
+                                    example: 18
+                              score_normalized:
+                                type: integer
+                                example: 18
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error:
+                    code: not_found
+                    message: No fear & greed data for this scope.
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: not_found
+                      message:
+                        type: string
+                        example: No fear & greed data for this scope.
+      tags:
+      - Sentiment
+  /api/v1/sentiment/bull-bear:
+    get:
+      summary: Bull / Bear index
+      operationId: bullBearIndex
+      description: 'The current Bull/Bear reading (a 15-minute snapshot — no history). Omit `coin`
+
+        for the market-wide index, or pass a coin slug for a per-coin reading.'
+      parameters:
+      - in: query
+        name: coin
+        description: Coin slug for a per-coin reading; omit for the market index.
+        example: bitcoin
+        required: false
+        schema:
+          type: string
+          description: Coin slug for a per-coin reading; omit for the market index.
+          example: bitcoin
+      responses: []
+      tags:
+      - Sentiment
+  /api/v1/sentiment/altseason:
+    get:
+      summary: Altseason index
+      operationId: altseasonIndex
+      description: 'The current altseason reading (count of coins beating BTC out of the top 100),
+
+        with optional daily `history`. Unlike Fear & Greed, altseason has full daily
+
+        history — pass `days` to include it.'
+      parameters:
+      - in: query
+        name: days
+        description: Days of daily history to include (1–365; 0/omit = current only).
+        example: 30
+        required: false
+        schema:
+          type:
+          - integer
+          - 'null'
+          description: Days of daily history to include (1–365; 0/omit = current only).
+          example: 30
+      responses: []
+      tags:
+      - Sentiment
+  /api/v1/sentiment/indicators:
+    get:
+      summary: Market indicator tally
+      operationId: marketIndicatorTally
+      description: 'The market-wide technical tally — 25 indicator categories rolled up, each with
+
+        its current state, score and category data.'
+      parameters: []
+      responses: []
+      tags:
+      - Sentiment
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: Create a Data API key in your <a href="/user/developer/api">developer console</a> — keys are Bearer-only and carry the <code>data-api</code> ability. Keep them server-side; they are never meant for client-side embedding.
