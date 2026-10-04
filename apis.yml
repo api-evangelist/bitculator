@@ -421,6 +421,9 @@ generated:
   confidence: 95
   at: '2026-07-05T18:54:54.185Z'
 common:
+- type: CapabilityMap
+  url: capabilities/bitculator-capability-edges.yml
+  name: Bitculator Business Capability Map
 - type: Overlay
   url: overlays/bitculator-data-api-overlay.yaml
 - type: Website
