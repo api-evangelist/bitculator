@@ -46,3 +46,29 @@ metering:
     Every call costs exactly 1 request — "no credits, no compute units". MCP tool calls draw from
     the same pool (handshake free). Plan-gated endpoints return plan_required rather than
     consuming quota upgrades.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units: []
+  plans:
+  - name: Free
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods: []
+  - name: Starter
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: Pro
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
