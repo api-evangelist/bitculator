@@ -1,4 +1,4 @@
-# bitculator
+# Bitculator
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,4 +64,136 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Cryptocurrency market-data and analytics platform offering live prices, indicators, market cap, alerts, calculators, a portfolio tracker, and embeddable widgets. Exposes a REST Data API with a public OpenAPI 3.0.3 contract.
+Modern cryptocurrency REST API providing programmatic read access to crypto market data including coins, prices, markets, exchanges, wallets, global market data, sentiment, indicators, liquidations, conversions, calculators, editorial content, alarms, and webhooks. Version 1.0.0 with 70+ endpoints across 15 groups.
+
+**Areas:** Cryptocurrency · crypto-market-data · Blockchain · Finance · Fintech · Web3 · Trading · Exchange Data · Wallets · Sentiment · Indicators
+
+## Bitculator on APIs.io
+
+Everything profiled for Bitculator is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/bitculator/](https://apis.io/providers/bitculator/)** — or go straight to one of the APIs or properties below.
+
+### APIs (15)
+
+- [Bitculator Alarms API](https://apis.io/apis/bitculator/bitculator-alarms-api/) — Price-alarm CRUD — the same alarms the web app manages. Alarms consume the key owner's alarm inventory balance, are TARGET-type on coins only, and an…
+- [Bitculator Calculators API](https://apis.io/apis/bitculator/bitculator-calculators-api/) — Server-side financial calculators mirroring the web tools: DCA, profit/loss and loan (which read cached market data), plus stateless compound-interest and…
+- [Bitculator Coins API](https://apis.io/apis/bitculator/bitculator-coins-api/) — Ranked coin and token market data: paginated listings, single-coin detail, movers (gainers/losers), recently-added, trending, and per-coin time series.…
+- [Bitculator Conversion API](https://apis.io/apis/bitculator/bitculator-conversion-api/) — Convert between any two active assets (crypto AND fiat), and list the currencies usable as conversion legs. Values are decimal strings. Fiat FX rates…
+- [Bitculator Editorial API](https://apis.io/apis/bitculator/bitculator-editorial-api/) — Editorial articles — published (ACTIVE) only. `locale` picks the content language with per-field English fallback (the payload reports which `locale`…
+- [Bitculator Exchanges API](https://apis.io/apis/bitculator/bitculator-exchanges-api/) — Exchange rankings, detail, trust scores, time series and per-exchange market/coin listings. Volumes are USD. There is no CEX/DEX column — `type` is derived…
+- [Bitculator Global Market API](https://apis.io/apis/bitculator/bitculator-global-market-api/) — Market-wide aggregates — total marketcap and volume, asset/exchange/pair/market counts, BTC/ETH dominance with a rank-based top-3, the market Fear & Greed…
+- [Bitculator Indicators API](https://apis.io/apis/bitculator/bitculator-indicators-api/) — Per-coin technical indicators. Each indicator is its own dedicated endpoint — momentum oscillators (RSI, Stoch-RSI, CCI, MFI, Williams %R), trend and price…
+- [Bitculator Liquidations API](https://apis.io/apis/bitculator/bitculator-liquidations-api/) — Derivatives liquidations. Source coverage is currently OKX swap markets only (stated in every `meta.note`). The RAW feed (the `/liquidations` list and the…
+- [Bitculator Markets API](https://apis.io/apis/bitculator/bitculator-markets-api/) — Tickers (per-exchange markets) and pairs (venue-aggregated markets), plus a coin's markets and raw per-exchange trading symbols. All of it is snapshot data…
+- [Bitculator Meta API](https://apis.io/apis/bitculator/bitculator-meta-api/) — API meta and introspection: an authenticated ping to verify a key and the middleware stack, current-key usage/quota, and the machine-readable OpenAPI spec.
+- [Bitculator Prices API](https://apis.io/apis/bitculator/bitculator-prices-api/) — The lightweight price hot path — current price, marketcap, 24h volume and recent changes for a requested set of coins. `/prices` requires a selector (ids,…
+- [Bitculator Sentiment API](https://apis.io/apis/bitculator/bitculator-sentiment-api/) — Market and per-coin sentiment indices. Fear & Greed and Bull/Bear are 15-minute-refresh SNAPSHOTS — only the current reading exists, there is no time series…
+- [Bitculator Wallets API](https://apis.io/apis/bitculator/bitculator-wallets-api/) — Crypto wallet reviews — review `score`, supported-asset count, pros/cons counts, price model and release date, plus a grouped tag taxonomy on detail/compare…
+- [Bitculator Webhooks API](https://apis.io/apis/bitculator/bitculator-webhooks-api/) — Bitculator POSTs each event as JSON with an HMAC signature header: X-Bitculator-Signature: t=<unix-ts>,v1=<hex hmac_sha256("<ts>.<raw-body>", secret)>…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Bitculator Webhooks](https://apis.io/asyncapis/bitculator/bitculator-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Bitculator MCP Server](https://apis.io/servers/bitculator/bitculator-mcp-server/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Bitculator Data Api Overlay](https://apis.io/overlays/bitculator/bitculator-data-api-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Bitculator Authentication](https://apis.io/security/bitculator/bitculator-authentication/)
+- [Bitculator Domain Security](https://apis.io/security/bitculator/bitculator-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Bitculator Plans Pricing](https://apis.io/plans/bitculator/bitculator-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Bitculator Rate Limits](https://apis.io/rate-limits/bitculator/bitculator-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.bitculator.com/)
+- [Pricing](https://bitculator.com/en/crypto-api)
+- [Sign up](https://bitculator.com/en/register)
+- [Support](https://bitculator.com/en/contact)
+- [Terms of service](https://bitculator.com/en/terms-of-service)
+- [Privacy policy](https://bitculator.com/en/privacy-policy)
+- [GitHub](https://github.com/Bitculator)
+
+## API Evangelist rating
+
+**Kin Score 51.2** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 53.3 |
+| Contract governance | 4.5 |
+| Operational transparency | 42.1 |
+| Developer ergonomics | 47.0 |
+| Access clarity | 76.3 |
+
+**Agent readiness 36.4** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 22.3** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/bitculator/](https://apis.io/providers/bitculator/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Bitculator: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/bitculator/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
